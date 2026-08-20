@@ -149,7 +149,6 @@ export default function Home() {
         </div>
         <div className="contact-box">
           <p><b>사진 상담 안내</b><br />설치 주소와 연락 가능한 시간도 함께 적어주시면 확인이 빠릅니다.</p>
-          <a href="mailto:hello@rocketboiler.kr?subject=보일러 설치 견적 문의">이메일 상담 →</a>
         </div>
       </section>
 
