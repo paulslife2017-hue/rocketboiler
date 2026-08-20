@@ -36,7 +36,7 @@ const extraOptions = [
   { name: "노후 배관 교체", price: 0, note: "현장 확인", description: "누수·부식 상태와 교체 범위를 확인한 뒤 안내합니다." },
 ] as const;
 const choiceSteps = [
-  { key: "installationType", title: "어떤 설치가 필요하신가요?", hint: "현재 상황에 맞는 질문과 예상 견적을 안내해 드립니다.", choices: ["기존 보일러 교체", "새집·상가 신규 설치", "잘 모르겠어요"] },
+  { key: "installationType", title: "어떤 설치가 필요하신가요?", hint: "현재 상황에 맞는 질문과 예상 견적을 안내해 드립니다.", choices: ["기존 보일러 교체", "새집·상가 신규 설치", "설치 유형 확인이 필요해요"] },
   { key: "homeType", title: "어떤 공간에 설치하시나요?", hint: "건물 형태에 따라 배기와 설치 조건이 달라집니다.", choices: ["아파트", "빌라·오피스텔", "단독주택", "상가", "잘 모르겠어요"] },
   { key: "fuel", title: "사용 중인 연료는 무엇인가요?", hint: "가스계량기나 기존 보일러 표기를 확인해 주세요.", choices: ["도시가스(LNG)", "LPG", "잘 모르겠어요"] },
   { key: "drain", title: "보일러 3m 안에 배수구가 있나요?", hint: "배수구가 있으면 콘덴싱 보일러 설치 가능성을 확인할 수 있습니다.", choices: ["있어요", "없어요", "잘 모르겠어요"] },
