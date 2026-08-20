@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npx next@latest build",
+  "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs"
 }
