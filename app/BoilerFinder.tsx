@@ -19,16 +19,16 @@ type Answers = {
 
 const initialAnswers: Answers = { region: "", homeType: "", area: "", fuel: "", drain: "", controllers: "", extras: [], timing: "", name: "", phone: "", consent: false };
 const extraOptions = [
-  { name: "코어 타공", price: 100000, note: "구멍당" },
-  { name: "연통 연장", price: 10000, note: "m당" },
-  { name: "엘보 추가", price: 10000, note: "개당" },
-  { name: "감압변", price: 20000, note: "개당" },
-  { name: "나비밸브", price: 20000, note: "개당" },
-  { name: "볼밸브", price: 30000, note: "개당" },
-  { name: "고소 작업", price: 50000, note: "현장 기준" },
-  { name: "배관 청소", price: 50000, note: "현장 기준" },
-  { name: "후렉시블 교체", price: 50000, note: "현장 기준" },
-  { name: "노후 배관 교체", price: 0, note: "현장 확인" },
+  { name: "코어 타공", price: 100000, note: "구멍당", description: "벽에 새 연통 구멍을 뚫어야 할 때 필요합니다." },
+  { name: "연통 연장", price: 10000, note: "m당", description: "보일러와 배기구 사이 거리가 길 때 추가합니다." },
+  { name: "엘보 추가", price: 10000, note: "개당", description: "연통 방향을 꺾어 연결해야 할 때 사용하는 부속입니다." },
+  { name: "감압변", price: 20000, note: "개당", description: "수압이 높은 현장에서 보일러를 보호하기 위해 설치합니다." },
+  { name: "나비밸브", price: 20000, note: "개당", description: "난방 배관의 물 흐름을 열고 닫는 부속입니다." },
+  { name: "볼밸브", price: 30000, note: "개당", description: "가스 또는 난방 배관 차단 밸브 교체가 필요할 때 추가합니다." },
+  { name: "고소 작업", price: 50000, note: "현장 기준", description: "높은 외벽 작업에 사다리나 별도 장비가 필요할 때 발생합니다." },
+  { name: "배관 청소", price: 50000, note: "현장 기준", description: "오래된 난방 배관의 이물질과 슬러지를 제거합니다." },
+  { name: "후렉시블 교체", price: 50000, note: "현장 기준", description: "노후되거나 규격이 맞지 않는 연결관을 교체합니다." },
+  { name: "노후 배관 교체", price: 0, note: "현장 확인", description: "누수·부식 상태와 교체 범위를 확인한 뒤 안내합니다." },
 ] as const;
 const choiceSteps = [
   { key: "homeType", title: "어떤 공간에 설치하시나요?", hint: "건물 형태에 따라 배기와 설치 조건이 달라집니다.", choices: ["아파트", "빌라·오피스텔", "단독주택", "상가", "잘 모르겠어요"] },
@@ -93,7 +93,7 @@ export default function BoilerFinder() {
           {step === 3 && <ChoiceQuestion data={choiceSteps[1]} value={answers.fuel} onChoose={choose} />}
           {step === 4 && <ChoiceQuestion data={choiceSteps[2]} value={answers.drain} onChoose={choose} />}
           {step === 5 && <ChoiceQuestion data={choiceSteps[3]} value={answers.controllers} onChoose={choose} />}
-          {step === 6 && <Question title="추가로 필요한 작업이 있나요?" hint="여러 개를 선택할 수 있어요. 모르시면 선택하지 않고 넘어가세요."><div className={styles.extras}>{extraOptions.map((item) => <button key={item.name} className={answers.extras.includes(item.name) ? styles.extraSelected : ""} onClick={() => toggleExtra(item.name)}><i>{answers.extras.includes(item.name) ? "✓" : "+"}</i><span><b>{item.name}</b><small>{item.note}</small></span><em>{item.price ? `+${item.price.toLocaleString("ko-KR")}원` : "현장 확인"}</em></button>)}</div><div className={styles.extraSummary}><span>선택 추가금</span><strong>+{extraTotal.toLocaleString("ko-KR")}원</strong></div><Next disabled={false} onClick={() => setStep(7)} /></Question>}
+          {step === 6 && <Question title="추가 작업이 예상되나요?" hint="현재 알고 있는 항목만 선택해 주세요. 잘 모르시면 선택 없이 넘어가도 됩니다."><div className={styles.extraNotice}><b>추가금은 언제 발생하나요?</b><p>기본 설치 범위를 벗어난 타공, 연통 연장, 부속 교체 등이 필요한 경우에만 발생합니다. 사진과 현장 확인 후 작업 전에 먼저 안내드립니다.</p></div><div className={styles.extras}>{extraOptions.map((item) => <button key={item.name} className={answers.extras.includes(item.name) ? styles.extraSelected : ""} onClick={() => toggleExtra(item.name)}><i>{answers.extras.includes(item.name) ? "✓" : ""}</i><span><b>{item.name}<small>{item.note}</small></b><p>{item.description}</p></span><em>{item.price ? `+${item.price.toLocaleString("ko-KR")}원` : "별도 견적"}</em></button>)}</div><div className={styles.extraSummary}><span>선택 항목 예상 추가금<small>수량과 현장 조건에 따라 달라질 수 있습니다.</small></span><strong>+{extraTotal.toLocaleString("ko-KR")}원</strong></div><Next disabled={false} onClick={() => setStep(7)} /></Question>}
           {step === 7 && <Question title="설치를 원하는 날짜가 언제인가요?" hint="달력에서 희망 설치일을 선택해 주세요."><label className={styles.dateInput}>희망 설치일<input type="date" min={new Date().toISOString().slice(0, 10)} value={answers.timing} onChange={(e) => setAnswers({ ...answers, timing: e.target.value })} /></label><Next disabled={!answers.timing} onClick={() => setStep(8)} /></Question>}
           {step === 8 && !submitted && <Question title="추천 결과가 나왔어요" hint="현장 사진 확인 후 정확한 모델과 설치 범위를 안내해 드립니다."><div className={styles.result}><span>예상 추천</span><strong>{result.capacity}</strong><b>{result.model} · {result.type}</b><div className={styles.price}><small>예상 기본가</small><em>{result.price}</em><i>제품·기본 설치 참고가</i></div>{answers.extras.length > 0 && <div className={styles.selectedExtras}><span>선택한 추가 작업</span><p>{answers.extras.join(" · ")}</p><b>예상 추가금 +{extraTotal.toLocaleString("ko-KR")}원</b></div>}<div className={styles.totalPrice}><span>예상 합계</span><strong>{estimatedTotal}</strong></div><ul><li>희망 설치일 {answers.timing}</li><li>각방제어기는 제조사와 통신·접점 방식 확인 필요</li><li>연통·배수구·각방제어 사진 확인 필요</li><li>수량·현장 조건에 따라 최종 가격이 달라질 수 있음</li></ul></div><div className={styles.contact}><label>이름<input value={answers.name} onChange={(e) => setAnswers({ ...answers, name: e.target.value })} placeholder="홍길동" /></label><label>휴대전화<input inputMode="tel" value={answers.phone} onChange={(e) => setAnswers({ ...answers, phone: e.target.value })} placeholder="010-0000-0000" /></label><label className={styles.consent}><input type="checkbox" checked={answers.consent} onChange={(e) => setAnswers({ ...answers, consent: e.target.checked })} /><span>상담을 위한 개인정보 수집·이용에 동의합니다.</span></label><button className={styles.submit} onClick={submit}>이 추천으로 상담 요청</button></div></Question>}
           {step === 8 && submitted && <div className={styles.done}><span>REQUEST SAVED</span><h2>상담 요청을<br />저장했습니다.</h2><p>입력하신 설치 조건과 추천 결과가 이 기기에 안전하게 보관되었습니다. DB 연결 후에는 담당자에게 자동 전달됩니다.</p><button onClick={close}>확인</button></div>}
