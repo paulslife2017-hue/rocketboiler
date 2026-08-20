@@ -58,6 +58,8 @@ export default function BoilerFinder() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>(initialAnswers);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [photos, setPhotos] = useState<{ id: string; file: File; url: string }[]>([]);
   const cameraInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
@@ -87,12 +89,23 @@ export default function BoilerFinder() {
 
   const removePhoto = (id: string) => setPhotos((current) => current.filter((photo) => { if (photo.id === id) URL.revokeObjectURL(photo.url); return photo.id !== id; }));
 
-  const submit = () => {
+  const submit = async () => {
     if (!answers.name.trim() || !/^01[016789]-?\d{3,4}-?\d{4}$/.test(answers.phone) || !answers.consent) return;
-    const lead = { id: crypto.randomUUID(), createdAt: new Date().toISOString(), source: window.location.pathname, ...answers, photoCount: photos.length, photoNames: photos.map((photo) => photo.file.name), recommendation: result };
-    const saved = JSON.parse(localStorage.getItem("rocketboiler-leads") || "[]");
-    localStorage.setItem("rocketboiler-leads", JSON.stringify([lead, ...saved].slice(0, 20)));
-    setSubmitted(true);
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ source: window.location.pathname, ...answers, area: Number(answers.area), photoNames: photos.map((photo) => photo.file.name), recommendation: { ...result, estimatedTotal } }),
+      });
+      if (!response.ok) throw new Error("save_failed");
+      setSubmitted(true);
+    } catch {
+      setSubmitError("저장 중 문제가 생겼습니다. 잠시 후 다시 눌러주세요.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const close = () => { setOpen(false); photos.forEach((photo) => URL.revokeObjectURL(photo.url)); setPhotos([]); setTimeout(() => { setStep(0); setSubmitted(false); }, 250); };
@@ -117,8 +130,8 @@ export default function BoilerFinder() {
           {step === 8 && <Question title="추가 작업이 예상되나요?" hint="현재 알고 있는 항목만 선택해 주세요. 잘 모르시면 선택 없이 넘어가도 됩니다."><div className={styles.extraNotice}><b>추가금은 언제 발생하나요?</b><p>기본 설치 범위를 벗어난 타공, 연통 연장, 부속 교체 등이 필요한 경우에만 발생합니다. 사진과 현장 확인 후 작업 전에 먼저 안내드립니다.</p></div><div className={styles.extras}>{extraOptions.map((item) => <button key={item.name} className={answers.extras.includes(item.name) ? styles.extraSelected : ""} onClick={() => toggleExtra(item.name)}><i>{answers.extras.includes(item.name) ? "✓" : ""}</i><span><b>{item.name}<small>{item.note}</small></b><p>{item.description}</p></span><em>{item.price ? `+${item.price.toLocaleString("ko-KR")}원` : "별도 견적"}</em></button>)}</div><div className={styles.extraSummary}><span>선택 항목 예상 추가금<small>수량과 현장 조건에 따라 달라질 수 있습니다.</small></span><strong>+{extraTotal.toLocaleString("ko-KR")}원</strong></div><Next disabled={false} onClick={() => setStep(9)} /></Question>}
           {step === 9 && <Question title="사진을 보내주시면 더 정확해요" hint="아래 항목이 잘 보이도록 최대 6장까지 촬영하거나 선택해 주세요."><div className={styles.photoGuide}>{["보일러 전체", "모델명 라벨", "하단 배관", "연통 연결부", "배수구 위치", "각방 조절기"].map((item, index) => <span key={item}><i>{index + 1}</i>{item}</span>)}</div><div className={styles.photoActions}><button onClick={() => cameraInput.current?.click()} disabled={photos.length >= 6}><b>카메라로 촬영</b><span>후면 카메라 열기</span></button><button onClick={() => galleryInput.current?.click()} disabled={photos.length >= 6}><b>갤러리에서 선택</b><span>여러 장 선택 가능</span></button><input ref={cameraInput} type="file" accept="image/*" capture="environment" hidden onChange={(e) => { addPhotos(e.target.files); e.target.value = ""; }} /><input ref={galleryInput} type="file" accept="image/*" multiple hidden onChange={(e) => { addPhotos(e.target.files); e.target.value = ""; }} /></div>{photos.length > 0 && <div className={styles.photoGrid}>{photos.map((photo, index) => <figure key={photo.id}><img src={photo.url} alt={`견적 사진 ${index + 1}`} /><figcaption>사진 {index + 1}</figcaption><button onClick={() => removePhoto(photo.id)} aria-label={`사진 ${index + 1} 삭제`}>×</button></figure>)}</div>}<div className={styles.photoStatus}><span>{photos.length} / 6장 선택</span><b>{photos.length >= 3 ? "사진 견적 준비 완료" : photos.length ? "3장 이상이면 더 정확해요" : "사진 없이도 상담 가능"}</b></div><p className={styles.photoPrivacy}>사진은 현재 화면에서만 임시 미리보기 됩니다. 서버 저장소 연결 전에는 담당자에게 전송되지 않습니다.</p><button className={styles.next} onClick={() => setStep(10)}>{photos.length ? "이 사진으로 계속" : "사진 없이 계속"}</button></Question>}
           {step === 10 && <Question title="언제 설치를 원하시나요?" hint="희망 날짜와 방문하기 편한 시간대를 선택해 주세요."><div className={styles.dateTime}><label className={styles.dateInput}>희망 설치일<input type="date" min={new Date().toISOString().slice(0, 10)} value={answers.timing} onChange={(e) => setAnswers({ ...answers, timing: e.target.value })} /></label><label className={styles.dateInput}>희망 시간대<select value={answers.timingTime} onChange={(e) => setAnswers({ ...answers, timingTime: e.target.value })}><option value="">시간대를 선택해 주세요</option><option>오전 9시~11시</option><option>오전 11시~오후 1시</option><option>오후 1시~3시</option><option>오후 3시~5시</option><option>시간 협의</option></select></label></div><p className={styles.scheduleNote}>실제 방문 시간은 기사 배정 후 전화로 최종 확인해 드립니다.</p><Next disabled={!answers.timing || !answers.timingTime} onClick={() => setStep(11)} /></Question>}
-          {step === 11 && !submitted && <Question title="추천 결과가 나왔어요" hint="현장 사진 확인 후 정확한 모델과 설치 범위를 안내해 드립니다."><div className={styles.result}><span>{answers.installationType}</span><strong>{result.capacity}</strong><b>{result.model} · {result.type}</b><div className={styles.installSummary}>{answers.installationType === "기존 보일러 교체" ? <><b>{answers.currentBrand} 교체</b><span>{answers.replaceReason}</span></> : <><b>신규 설치 조건</b><span>{answers.installReadiness || "현장 확인 필요"}</span></>}</div><div className={styles.price}><small>예상 기본가</small><em>{result.price}</em><i>제품·기본 설치 참고가</i></div>{answers.extras.length > 0 && <div className={styles.selectedExtras}><span>선택한 추가 작업</span><p>{answers.extras.join(" · ")}</p><b>예상 추가금 +{extraTotal.toLocaleString("ko-KR")}원</b></div>}<div className={styles.totalPrice}><span>예상 합계</span><strong>{estimatedTotal}</strong></div><ul><li>선택 사진 {photos.length}장</li><li>희망 일정 {answers.timing} · {answers.timingTime}</li><li>{answers.installationType === "기존 보일러 교체" ? "기존 제품 철거·수거와 동일 위치 설치 여부 확인" : "신규 배관·연통·타공 범위 확인"}</li><li>수량·현장 조건에 따라 최종 가격이 달라질 수 있음</li></ul></div><div className={styles.contact}><label>이름<input value={answers.name} onChange={(e) => setAnswers({ ...answers, name: e.target.value })} placeholder="홍길동" /></label><label>휴대전화<input inputMode="tel" value={answers.phone} onChange={(e) => setAnswers({ ...answers, phone: e.target.value })} placeholder="010-0000-0000" /></label><label className={styles.consent}><input type="checkbox" checked={answers.consent} onChange={(e) => setAnswers({ ...answers, consent: e.target.checked })} /><span>상담을 위한 개인정보 수집·이용에 동의합니다.</span></label><button className={styles.submit} onClick={submit}>이 추천으로 상담 요청</button></div></Question>}
-          {step === 11 && submitted && <div className={styles.done}><span>REQUEST SAVED</span><h2>상담 요청을<br />저장했습니다.</h2><p>설치 조건과 추천 결과는 이 기기에 보관되었습니다. 선택한 사진은 서버 저장소 연결 후 담당자에게 자동 전달할 수 있습니다.</p><button onClick={close}>확인</button></div>}
+          {step === 11 && !submitted && <Question title="추천 결과가 나왔어요" hint="현장 사진 확인 후 정확한 모델과 설치 범위를 안내해 드립니다."><div className={styles.result}><span>{answers.installationType}</span><strong>{result.capacity}</strong><b>{result.model} · {result.type}</b><div className={styles.installSummary}>{answers.installationType === "기존 보일러 교체" ? <><b>{answers.currentBrand} 교체</b><span>{answers.replaceReason}</span></> : <><b>신규 설치 조건</b><span>{answers.installReadiness || "현장 확인 필요"}</span></>}</div><div className={styles.price}><small>예상 기본가</small><em>{result.price}</em><i>제품·기본 설치 참고가</i></div>{answers.extras.length > 0 && <div className={styles.selectedExtras}><span>선택한 추가 작업</span><p>{answers.extras.join(" · ")}</p><b>예상 추가금 +{extraTotal.toLocaleString("ko-KR")}원</b></div>}<div className={styles.totalPrice}><span>예상 합계</span><strong>{estimatedTotal}</strong></div><ul><li>선택 사진 {photos.length}장</li><li>희망 일정 {answers.timing} · {answers.timingTime}</li><li>{answers.installationType === "기존 보일러 교체" ? "기존 제품 철거·수거와 동일 위치 설치 여부 확인" : "신규 배관·연통·타공 범위 확인"}</li><li>수량·현장 조건에 따라 최종 가격이 달라질 수 있음</li></ul></div><div className={styles.contact}><label>이름<input value={answers.name} onChange={(e) => setAnswers({ ...answers, name: e.target.value })} placeholder="홍길동" /></label><label>휴대전화<input inputMode="tel" value={answers.phone} onChange={(e) => setAnswers({ ...answers, phone: e.target.value })} placeholder="010-0000-0000" /></label><label className={styles.consent}><input type="checkbox" checked={answers.consent} onChange={(e) => setAnswers({ ...answers, consent: e.target.checked })} /><span>상담을 위한 개인정보 수집·이용에 동의합니다.</span></label>{submitError && <p role="alert">{submitError}</p>}<button className={styles.submit} onClick={submit} disabled={submitting}>{submitting ? "안전하게 저장 중..." : "이 추천으로 상담 요청"}</button></div></Question>}
+          {step === 11 && submitted && <div className={styles.done}><span>REQUEST SAVED</span><h2>상담 요청을<br />접수했습니다.</h2><p>설치 조건과 추천 결과가 담당자 확인용 DB에 안전하게 저장되었습니다. 사진 원본 전송은 저장소 연결 후 추가됩니다.</p><button onClick={close}>확인</button></div>}
         </div>
         <footer>제품과 설치 가능 여부는 현장 확인 후 최종 확정됩니다.</footer>
       </section>
