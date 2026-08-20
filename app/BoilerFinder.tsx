@@ -65,7 +65,7 @@ export default function BoilerFinder() {
     <button className={styles.launcher} onClick={() => setOpen(true)} aria-haspopup="dialog"><span>30초</span><strong>나에게 맞는<br />보일러 찾기</strong><i>→</i></button>
     {open && <div className={styles.backdrop} onMouseDown={(event) => event.target === event.currentTarget && close()}>
       <section className={styles.panel} role="dialog" aria-modal="true" aria-label="나에게 맞는 보일러 찾기">
-        <header><button onClick={step ? () => setStep(step - 1) : close()} aria-label={step ? "이전 질문" : "닫기"}>←</button><div><b>ROCKET MATCH</b><span>{step + 1} / {totalSteps}</span></div><button onClick={close} aria-label="닫기">×</button></header>
+        <header><button onClick={step ? () => setStep(step - 1) : close} aria-label={step ? "이전 질문" : "닫기"}>←</button><div><b>ROCKET MATCH</b><span>{step + 1} / {totalSteps}</span></div><button onClick={close} aria-label="닫기">×</button></header>
         <div className={styles.progress}><i style={{ width: progress }} /></div>
         <div className={styles.content}>
           {step === 0 && <Question title="어느 지역에 설치하시나요?" hint="동까지 적어주시면 방문 가능 여부를 빠르게 확인할 수 있어요."><label className={styles.inputLabel}>설치 지역<input autoFocus value={answers.region} onChange={(e) => setAnswers({ ...answers, region: e.target.value })} placeholder="예: 서울 송파구 문정동" /></label><Next disabled={!answers.region.trim()} onClick={() => setStep(1)} /></Question>}
@@ -87,5 +87,4 @@ export default function BoilerFinder() {
 function Question({ title, hint, children }: { title: string; hint: string; children: React.ReactNode }) { return <div className={styles.question}><p>우리집 보일러 찾기</p><h2>{title}</h2><span>{hint}</span>{children}</div>; }
 function Next({ disabled, onClick }: { disabled: boolean; onClick: () => void }) { return <button className={styles.next} disabled={disabled} onClick={onClick}>다음 질문</button>; }
 function ChoiceQuestion({ data, value, onChoose }: { data: typeof choiceSteps[number]; value: string; onChoose: (key: keyof Answers, value: string) => void }) { return <Question title={data.title} hint={data.hint}><div className={styles.choices}>{data.choices.map((choice, index) => <button className={value === choice ? styles.selected : ""} key={choice} onClick={() => onChoose(data.key, choice)}><i>{String(index + 1).padStart(2, "0")}</i><span>{choice}</span><b>→</b></button>)}</div></Question>; }
-
 
