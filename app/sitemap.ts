@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const baseUrl = "https://rocket-boiler-kr.kbeuaty.chatgpt.site";
+const baseUrl = "https://rocketboiler.vercel.app";
 const regions = ["gangnam", "seocho", "songpa", "gangdong", "mapo", "gangseo", "nowon", "seongnam"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -9,3 +9,4 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...regions.map((region) => ({ url: `${baseUrl}/regions/${region}`, changeFrequency: "monthly" as const, priority: 0.8 })),
   ];
 }
+
