@@ -60,3 +60,11 @@
 
 @media(max-width:360px){.quick{grid-template-columns:repeat(2,minmax(0,1fr))}.content{padding-left:15px;padding-right:15px}.question h2,.done h2{font-size:26px}}
 
+.paidServices{margin:16px 0;padding:16px;border:1px solid #d8ded9;border-radius:10px;background:#fff}
+.paidServices>b{display:block;margin-bottom:11px;color:#26312d;font-size:14px}
+.servicePriceList{display:grid;border-top:1px solid #e3e7e4}
+.servicePriceList span{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid #e3e7e4}
+.servicePriceList i{color:#49554f;font-size:13px;font-style:normal}
+.servicePriceList em{color:#315f50;font-size:13px;font-style:normal;font-weight:800;white-space:nowrap}
+.paidServices>p{margin:11px 0 0;color:#737d78;font-size:11px;line-height:1.55}
+
