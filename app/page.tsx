@@ -4,7 +4,7 @@ const faqs = [
   ["보일러 설치 시간은 얼마나 걸리나요?", "평균 설치 시간은 약 1시간 30분~2시간입니다. 각방제어기 추가 작업이 있으면 최대 3시간, 통신선 상태가 복잡하거나 배선 정리가 필요하면 최대 4시간까지 소요될 수 있습니다."],
   ["사진으로 먼저 견적을 받을 수 있나요?", "네. 사진으로 거의 확정적인 견적 안내가 가능합니다. 보일러 전체 공간과 모델명, 배관, 연통, 배수구 위치가 보이도록 촬영해 주세요. 보일러에서 3m 이내에 배수구가 있는지 확인할 수 있어야 하며, 각방제어를 사용 중이면 각방제어기와 실내 온도조절기 전체 사진도 함께 보내주세요."],
   ["현장에서 추가 비용이 생길 수도 있나요?", "기본 설치 조건이면 별도 추가 비용은 없습니다. 다만 현장에서 연통 연장, 배관 이설, 타공 등 추가 작업이 필요한 경우 비용이 발생할 수 있으며, 코어 타공은 구멍 1개당 10만원입니다. 추가 작업은 진행 전에 먼저 안내드립니다."],
-  ["어떤 브랜드를 설치하나요?", "경동나비엔과 귀뚜라미 보일러를 취급합니다. 집의 평수와 온수 사용량, 기존 설치 조건에 맞는 제품을 안내해 드립니다."],
+  ["어떤 브랜드를 설치하나요?", "경동나비엔, 귀뚜라미, 린나이 보일러를 취급합니다. 집의 평수와 온수 사용량, 기존 설치 조건에 맞는 제품을 안내해 드립니다."],
 ];
 
 const areas = [
@@ -102,17 +102,21 @@ export default function Home() {
           <h2>보일러 설치 예상 비용입니다.</h2>
           <p>아래 금액은 기본 설치를 기준으로 한 상담용 예상 금액입니다. 브랜드와 모델, 배관·연통 상태에 따라 달라질 수 있습니다.</p>
         </div>
-        <div className="price-table" role="table" aria-label="평수별 보일러 설치 예상 비용">
-          <div className="table-head" role="row"><span>주거 면적</span><span>일반 권장 용량</span><span>예상 비용</span></div>
-          <div role="row"><b>20평대</b><span>15,000 ~ 18,000 kcal</span><strong>60만원대부터</strong></div>
-          <div role="row"><b>30평대</b><span>18,000 ~ 22,000 kcal</span><strong>70만원대부터</strong></div>
-          <div role="row"><b>40평대 이상</b><span>25,000 kcal 이상</span><strong>현장 맞춤 견적</strong></div>
-          <p>교체는 기존 제품 철거와 기본 설치 기준이며, 신규·이전 설치는 배관과 연통 조건 확인 후 안내합니다.</p>
+        <div className="price-tables">
+          <article className="price-card">
+            <div><span>귀뚜라미 기준</span><h3>일반 보일러</h3></div>
+            {[["원룸형","60만원대부터"],["20평대","65~70만원대부터"],["30평대","70~75만원대부터"],["40평대","75~80만원대부터"],["50평대","80~85만원대부터"]].map(([area,cost])=><p key={area}><b>{area}</b><strong>{cost}</strong></p>)}
+          </article>
+          <article className="price-card eco">
+            <div><span>1등급 친환경</span><h3>콘덴싱 보일러</h3></div>
+            {[["원룸형","75~80만원"],["20평대","80~85만원"],["30평대","85~90만원"],["40평대","90~95만원"],["50평대","95~100만원"],["60평대","100~105만원"]].map(([area,cost])=><p key={area}><b>{area}</b><strong>{cost}</strong></p>)}
+          </article>
+          <div className="price-guide"><b>브랜드별 가격 안내</b><span>귀뚜라미 기준 · 린나이 동급 모델 약 3만원 추가 · 경동나비엔 동급 모델 약 5만원 추가</span><small>기본 설치 범위의 상담용 예상가입니다. 사진과 현장 확인 결과에 따라 필요한 옵션이 추가되거나 제외될 수 있으며, 작업 전에 먼저 안내합니다.</small></div>
         </div>
       </section>
 
       <section className="brands">
-        <div><span>취급 브랜드</span><strong>경동나비엔</strong><strong>귀뚜라미</strong></div>
+        <div><span>취급 브랜드</span><strong>경동나비엔</strong><strong>귀뚜라미</strong><strong>린나이</strong></div>
       </section>
 
       <section className="section area" id="area">
