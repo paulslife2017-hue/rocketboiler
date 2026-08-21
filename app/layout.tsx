@@ -25,7 +25,10 @@ export const metadata: Metadata = {
     images: ["/og.png"],
   },
   robots: { index: true, follow: true },
-  verification: { google: "Cp7SFz3tzpsMia6iRSQ5wZm59vKxIjiwg8yp0fLvObc" },
+  verification: {
+    google: "Cp7SFz3tzpsMia6iRSQ5wZm59vKxIjiwg8yp0fLvObc",
+    other: { "naver-site-verification": "7744996afa5773d3ec1ce39c4458f482b3229889" },
+  },
 };
 
 const localBusiness = {
