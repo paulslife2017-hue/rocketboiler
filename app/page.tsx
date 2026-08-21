@@ -8,13 +8,14 @@ const faqs = [
 ];
 
 const areas = [
-  ["강남구", "/regions/gangnam"],
-  ["서초구", "/regions/seocho"],
-  ["송파구", "/regions/songpa"],
-  ["강동구", "/regions/gangdong"],
-  ["마포구", "/regions/mapo"],
-  ["강서구", "/regions/gangseo"],
-  ["노원구", "/regions/nowon"],
+  ["군포시", "/regions/gunpo"],
+  ["안양시", "/regions/anyang"],
+  ["과천시", "/regions/gwacheon"],
+  ["광명시", "/regions/gwangmyeong"],
+  ["부천시", "/regions/bucheon"],
+  ["고양시", "/regions/goyang"],
+  ["구리시", "/regions/guri"],
+  ["하남시", "/regions/hanam"],
   ["성남시", "/regions/seongnam"],
 ];
 
@@ -122,7 +123,7 @@ export default function Home() {
       <section className="section area" id="area">
         <div className="section-heading compact">
           <span>출장 가능 지역</span>
-          <h2>서울·경기·인천 방문 가능합니다.</h2>
+          <h2>서울 전 지역·경기 9개 시·인천 방문 가능합니다.</h2>
           <p>지역과 접수 시간, 기사 배정 상황에 따라 당일 방문 여부가 달라질 수 있습니다.</p>
         </div>
         <div className="area-list">
@@ -159,7 +160,7 @@ export default function Home() {
       <footer>
         <div className="footer-brand"><b>로켓보일러</b><span>서울·경기 가정용 보일러 교체·설치</span></div>
         <div className="footer-links"><a href="#service">서비스 안내</a><a href="#price">비용 안내</a><a href="#area">출장 지역</a><a href="#faq">자주 묻는 질문</a></div>
-        <p>로켓보일러 | 서울·경기·인천 가정용 보일러 교체·설치<br />© 2026 로켓보일러. All rights reserved.</p>
+        <p>로켓보일러 | 서울 전 지역·경기 9개 시·인천 보일러 교체·설치<br />인천 영종도·강화군 등 도서 지역 제외<br />© 2026 로켓보일러. All rights reserved.</p>
       </footer>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     </main>
