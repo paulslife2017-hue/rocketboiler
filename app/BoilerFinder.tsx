@@ -161,7 +161,7 @@ export default function BoilerFinder() {
   const progress = `${((step + 1) / totalSteps) * 100}%`;
 
   return <>
-    <button className={styles.launcher} onClick={() => setOpen(true)} aria-haspopup="dialog"><span>30초</span><strong>보일러 찾기</strong><i>→</i></button>
+    <button className={styles.launcher} onClick={() => setOpen(true)} aria-haspopup="dialog" aria-label="보일러 설치 예약 열기"><span>빠른</span><strong>설치 예약</strong><i>→</i></button>
     {open && <div className={styles.backdrop} onMouseDown={(event) => event.target === event.currentTarget && close()}>
       <section className={styles.panel} role="dialog" aria-modal="true" aria-label="나에게 맞는 보일러 찾기">
         <header><button onClick={step ? () => setStep(step - 1) : close} aria-label={step ? "이전 질문" : "닫기"}>←</button><div><b>ROCKET MATCH</b><span>{step + 1} / {totalSteps}</span></div><button onClick={close} aria-label="닫기">×</button></header>
