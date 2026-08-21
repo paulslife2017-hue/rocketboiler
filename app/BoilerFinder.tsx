@@ -12,8 +12,13 @@ type Answers = {
   homeType: string;
   area: string;
   fuel: string;
+  fuelOther: string;
   drain: string;
   controllers: string;
+  controllerBrand: string;
+  preferredBrand: string;
+  boilerPosition: string;
+  exhaustType: string;
   extras: string[];
   timing: string;
   timingTime: string;
@@ -22,35 +27,25 @@ type Answers = {
   consent: boolean;
 };
 
-const initialAnswers: Answers = { region: "", installationType: "", currentBrand: "", replaceReason: "", installReadiness: "", homeType: "", area: "", fuel: "", drain: "", controllers: "", extras: [], timing: "", timingTime: "", name: "", phone: "", consent: false };
-const extraOptions = [
-  { name: "코어 타공", price: 100000, note: "구멍당", description: "벽에 새 연통 구멍을 뚫어야 할 때 필요합니다." },
-  { name: "연통 연장", price: 10000, note: "m당", description: "보일러와 배기구 사이 거리가 길 때 추가합니다." },
-  { name: "엘보 추가", price: 10000, note: "개당", description: "연통 방향을 꺾어 연결해야 할 때 사용하는 부속입니다." },
-  { name: "감압변", price: 20000, note: "개당", description: "수압이 높은 현장에서 보일러를 보호하기 위해 설치합니다." },
-  { name: "나비밸브", price: 20000, note: "개당", description: "난방 배관의 물 흐름을 열고 닫는 부속입니다." },
-  { name: "볼밸브", price: 30000, note: "개당", description: "가스 또는 난방 배관 차단 밸브 교체가 필요할 때 추가합니다." },
-  { name: "고소 작업", price: 50000, note: "현장 기준", description: "높은 외벽 작업에 사다리나 별도 장비가 필요할 때 발생합니다." },
-  { name: "배관 청소", price: 50000, note: "현장 기준", description: "오래된 난방 배관의 이물질과 슬러지를 제거합니다." },
-  { name: "후렉시블 교체", price: 50000, note: "현장 기준", description: "노후되거나 규격이 맞지 않는 연결관을 교체합니다." },
-  { name: "노후 배관 교체", price: 0, note: "현장 확인", description: "누수·부식 상태와 교체 범위를 확인한 뒤 안내합니다." },
-] as const;
+const initialAnswers: Answers = { region: "", installationType: "", currentBrand: "", replaceReason: "", installReadiness: "", homeType: "", area: "", fuel: "", fuelOther: "", drain: "", controllers: "", controllerBrand: "", preferredBrand: "", boilerPosition: "", exhaustType: "", extras: [], timing: "", timingTime: "", name: "", phone: "", consent: false };
 const choiceSteps = [
   { key: "installationType", title: "어떤 설치가 필요하신가요?", hint: "현재 상황에 맞는 질문과 예상 견적을 안내해 드립니다.", choices: ["기존 보일러 교체", "새집·상가 신규 설치", "설치 유형 확인이 필요해요"] },
-  { key: "homeType", title: "어떤 공간에 설치하시나요?", hint: "건물 형태에 따라 배기와 설치 조건이 달라집니다.", choices: ["아파트", "빌라·오피스텔", "단독주택", "상가", "잘 모르겠어요"] },
-  { key: "fuel", title: "사용 중인 연료는 무엇인가요?", hint: "가스계량기나 기존 보일러 표기를 확인해 주세요.", choices: ["도시가스(LNG)", "LPG", "잘 모르겠어요"] },
+  { key: "homeType", title: "어떤 공간에 설치하시나요?", hint: "건물 형태에 따라 배기와 설치 조건이 달라집니다.", choices: ["계단식 아파트", "복도식 아파트", "빌라·오피스텔", "단독주택", "상가", "잘 모르겠어요"] },
   { key: "drain", title: "보일러 3m 안에 배수구가 있나요?", hint: "배수구가 있으면 콘덴싱 보일러 설치 가능성을 확인할 수 있습니다.", choices: ["있어요", "없어요", "잘 모르겠어요"] },
-  { key: "controllers", title: "온도조절기는 몇 개인가요?", hint: "방마다 조절기가 있다면 각방제어 호환 확인이 필요합니다.", choices: ["1개", "2~3개", "4개 이상", "잘 모르겠어요"] },
 ] as const;
 
-function recommendation(areaText: string, drain: string) {
+function recommendation(areaText: string, drain: string, brand: string, controllers: string, homeType: string, boilerPosition: string) {
   const area = Number(areaText) || 0;
-  const condensing = area <= 21 ? { capacity: "15K급", price: 750000 } : area <= 24 ? { capacity: "18K급", price: 800000 } : area <= 34 ? { capacity: "22K급", price: 900000 } : area <= 44 ? { capacity: "27K급", price: 950000 } : { capacity: "33K급", price: 1000000 };
-  const general = area <= 21 ? { capacity: "15K급", price: 700000 } : area <= 30 ? { capacity: "20K급", price: 750000 } : { capacity: "25K급", price: 800000 };
+  const general = area < 15 ? { capacity: "원룸형", min: 600000, max: 650000 } : area < 30 ? { capacity: "20평대", min: 650000, max: 700000 } : area < 40 ? { capacity: "30평대", min: 700000, max: 750000 } : area < 50 ? { capacity: "40평대", min: 750000, max: 800000 } : { capacity: "50평대", min: 800000, max: 850000 };
+  const condensing = area < 15 ? { capacity: "원룸형", min: 750000, max: 800000 } : area < 30 ? { capacity: "20평대", min: 800000, max: 850000 } : area < 40 ? { capacity: "30평대", min: 850000, max: 900000 } : area < 50 ? { capacity: "40평대", min: 900000, max: 950000 } : area < 60 ? { capacity: "50평대", min: 950000, max: 1000000 } : { capacity: "60평대", min: 1000000, max: 1050000 };
+  const brandUp = brand === "경동나비엔" ? 50000 : brand === "린나이" ? 30000 : 0;
+  const conditionUp = (controllers === "2개 이상" ? 50000 : 0) + (homeType === "복도식 아파트" ? 100000 : 0) + (boilerPosition === "난방 바닥보다 아래" ? 50000 : 0);
   const selected = drain === "없어요" ? general : condensing;
   const type = drain === "있어요" ? "콘덴싱 보일러 우선 검토" : drain === "없어요" ? "일반형 또는 배수 공사 가능 여부 확인" : "일반형·콘덴싱 현장 확인";
-  const price = drain === "잘 모르겠어요" ? `${general.price.toLocaleString("ko-KR")}~${condensing.price.toLocaleString("ko-KR")}원` : `${selected.price.toLocaleString("ko-KR")}원`;
-  return { capacity: selected.capacity, type, price, basePrice: selected.price, minPrice: general.price, maxPrice: condensing.price, model: drain === "없어요" ? "일반형 NGB급" : "콘덴싱 NCB급" };
+  const minPrice = (drain === "잘 모르겠어요" ? general.min : selected.min) + brandUp + conditionUp;
+  const maxPrice = (drain === "잘 모르겠어요" ? condensing.max : selected.max) + brandUp + conditionUp;
+  const price = `${minPrice.toLocaleString("ko-KR")}~${maxPrice.toLocaleString("ko-KR")}원`;
+  return { capacity: selected.capacity, type, price, minPrice, maxPrice, model: drain === "없어요" ? "일반형" : "1등급 친환경 콘덴싱", brand: brand || "상담 후 추천" };
 }
 
 async function compressPhoto(file: File) {
@@ -83,9 +78,8 @@ export default function BoilerFinder() {
   const [photos, setPhotos] = useState<{ id: string; file: File; url: string }[]>([]);
   const cameraInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
-  const result = useMemo(() => recommendation(answers.area, answers.drain), [answers.area, answers.drain]);
-  const extraTotal = useMemo(() => extraOptions.filter((item) => answers.extras.includes(item.name)).reduce((sum, item) => sum + item.price, 0), [answers.extras]);
-  const estimatedTotal = answers.drain === "잘 모르겠어요" ? `${(result.minPrice + extraTotal).toLocaleString("ko-KR")}~${(result.maxPrice + extraTotal).toLocaleString("ko-KR")}원` : `${(result.basePrice + extraTotal).toLocaleString("ko-KR")}원`;
+  const result = useMemo(() => recommendation(answers.area, answers.drain, answers.preferredBrand, answers.controllers, answers.homeType, answers.boilerPosition), [answers.area, answers.drain, answers.preferredBrand, answers.controllers, answers.homeType, answers.boilerPosition]);
+  const estimatedTotal = result.price;
   const totalSteps = 12;
 
   useEffect(() => {
@@ -97,8 +91,6 @@ export default function BoilerFinder() {
     setAnswers((current) => ({ ...current, [key]: value }));
     setTimeout(() => setStep((current) => Math.min(current + 1, totalSteps - 1)), 140);
   };
-
-  const toggleExtra = (name: string) => setAnswers((current) => ({ ...current, extras: current.extras.includes(name) ? current.extras.filter((item) => item !== name) : [...current.extras, name] }));
 
   const addPhotos = (files: FileList | null) => {
     if (!files) return;
@@ -129,7 +121,7 @@ export default function BoilerFinder() {
       const response = await fetch("/api/leads", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ source: window.location.pathname, ...answers, area: Number(answers.area), photoNames: photos.map((photo) => photo.file.name), photoPaths, recommendation: { ...result, estimatedTotal } }),
+        body: JSON.stringify({ source: window.location.pathname, ...answers, extras: [`희망 브랜드: ${answers.preferredBrand || "상담 후 추천"}`, `각방제어: ${answers.controllers}${answers.controllerBrand ? ` / ${answers.controllerBrand}` : ""}`, `보일러 위치: ${answers.boilerPosition}`, `배기 방식: ${answers.exhaustType}`, answers.fuelOther ? `기타 연료: ${answers.fuelOther}` : ""].filter(Boolean), area: Number(answers.area), photoNames: photos.map((photo) => photo.file.name), photoPaths, recommendation: { ...result, estimatedTotal } }),
       });
       if (!response.ok) throw new Error("save_failed");
       setSubmitted(true);
@@ -156,13 +148,13 @@ export default function BoilerFinder() {
           {step === 2 && answers.installationType !== "기존 보일러 교체" && <Question title="설치 자리는 준비되어 있나요?" hint="기존 배관과 연통 구멍 유무에 따라 신규 설치 범위가 달라집니다."><div className={styles.choices}>{["보일러 자리와 배관이 있어요", "설치 공간만 있어요", "처음부터 공사가 필요해요", "잘 모르겠어요"].map((choice, index) => <button className={answers.installReadiness === choice ? styles.selected : ""} key={choice} onClick={() => { setAnswers({ ...answers, installReadiness: choice }); setTimeout(() => setStep(3), 140); }}><i>{String(index + 1).padStart(2, "0")}</i><span>{choice}</span><b>→</b></button>)}</div></Question>}
           {step === 3 && <ChoiceQuestion data={choiceSteps[1]} value={answers.homeType} onChoose={choose} />}
           {step === 4 && <Question title="난방하는 공간은 몇 평인가요?" hint="공급면적 또는 대략적인 평수를 입력해도 괜찮습니다."><label className={styles.areaInput}><input inputMode="numeric" value={answers.area} onChange={(e) => setAnswers({ ...answers, area: e.target.value.replace(/\D/g, "").slice(0, 3) })} placeholder="32" /><span>평</span></label><div className={styles.quick}>{["20", "24", "32", "40", "50"].map((v) => <button key={v} onClick={() => setAnswers({ ...answers, area: v })}>{v}평</button>)}</div><Next disabled={!answers.area} onClick={() => setStep(5)} /></Question>}
-          {step === 5 && <ChoiceQuestion data={choiceSteps[2]} value={answers.fuel} onChoose={choose} />}
-          {step === 6 && <ChoiceQuestion data={choiceSteps[3]} value={answers.drain} onChoose={choose} />}
-          {step === 7 && <ChoiceQuestion data={choiceSteps[4]} value={answers.controllers} onChoose={choose} />}
-          {step === 8 && <Question title="추가 작업이 예상되나요?" hint="현재 알고 있는 항목만 선택해 주세요. 잘 모르시면 선택 없이 넘어가도 됩니다."><div className={styles.extraNotice}><b>추가금은 언제 발생하나요?</b><p>기본 설치 범위를 벗어난 타공, 연통 연장, 부속 교체 등이 필요한 경우에만 발생합니다. 사진과 현장 확인 후 작업 전에 먼저 안내드립니다.</p></div><div className={styles.extras}>{extraOptions.map((item) => <button key={item.name} className={answers.extras.includes(item.name) ? styles.extraSelected : ""} onClick={() => toggleExtra(item.name)}><i>{answers.extras.includes(item.name) ? "✓" : ""}</i><span><b>{item.name}<small>{item.note}</small></b><p>{item.description}</p></span><em>{item.price ? `+${item.price.toLocaleString("ko-KR")}원` : "별도 견적"}</em></button>)}</div><div className={styles.extraSummary}><span>선택 항목 예상 추가금<small>수량과 현장 조건에 따라 달라질 수 있습니다.</small></span><strong>+{extraTotal.toLocaleString("ko-KR")}원</strong></div><Next disabled={false} onClick={() => setStep(9)} /></Question>}
+          {step === 5 && <Question title="사용 중인 연료는 무엇인가요?" hint="가스계량기나 기존 보일러 표기를 확인해 주세요."><div className={styles.choices}>{["도시가스(LNG)", "LPG", "기름", "전기", "펠렛", "심야", "잘 모름", "기타 연료·제품"].map((choice, index) => <button className={answers.fuel === choice ? styles.selected : ""} key={choice} onClick={() => setAnswers({ ...answers, fuel: choice })}><i>{String(index + 1).padStart(2, "0")}</i><span>{choice}</span><b>→</b></button>)}</div>{answers.fuel === "기타 연료·제품" && <label className={styles.inputLabel}>연료 또는 제품<input value={answers.fuelOther} onChange={(e) => setAnswers({ ...answers, fuelOther: e.target.value })} placeholder="예: 화목, 산업용 보일러" /></label>}<Next disabled={!answers.fuel || (answers.fuel === "기타 연료·제품" && !answers.fuelOther.trim())} onClick={() => setStep(6)} /></Question>}
+          {step === 6 && <ChoiceQuestion data={choiceSteps[2]} value={answers.drain} onChoose={choose} />}
+          {step === 7 && <Question title="온도조절기와 희망 브랜드를 알려주세요" hint="각방제어기가 있으면 호환 장치가 필요한지 함께 확인합니다."><div className={styles.quick}>{["1개", "2개 이상", "잘 모르겠어요"].map((value) => <button className={answers.controllers === value ? styles.selected : ""} key={value} onClick={() => setAnswers({ ...answers, controllers: value })}>{value}</button>)}</div><div className={styles.situationGrid}>{answers.controllers === "2개 이상" && <label className={styles.dateInput}>각방제어기 브랜드<select value={answers.controllerBrand} onChange={(e) => setAnswers({ ...answers, controllerBrand: e.target.value })}><option value="">선택해 주세요</option><option>코텍</option><option>하니웰</option><option>경동나비엔</option><option>귀뚜라미</option><option>린나이</option><option>기타·잘 모르겠어요</option></select></label>}<label className={styles.dateInput}>희망 보일러 브랜드<select value={answers.preferredBrand} onChange={(e) => setAnswers({ ...answers, preferredBrand: e.target.value })}><option value="">선택해 주세요</option><option>귀뚜라미</option><option>린나이</option><option>경동나비엔</option><option>상담 후 추천</option></select></label></div><Next disabled={!answers.controllers || !answers.preferredBrand || (answers.controllers === "2개 이상" && !answers.controllerBrand)} onClick={() => setStep(8)} /></Question>}
+          {step === 8 && <Question title="보일러 위치와 배기 방식을 확인해 주세요" hint="사진을 보고 선택해도 되고, 모르면 현장에서 확인해 드립니다."><div className={styles.situationGrid}><label className={styles.dateInput}>난방 바닥과 보일러 위치<select value={answers.boilerPosition} onChange={(e) => setAnswers({ ...answers, boilerPosition: e.target.value })}><option value="">선택해 주세요</option><option>난방 바닥보다 아래</option><option>난방 바닥보다 위</option><option>바닥과 비슷한 높이</option><option>잘 모르겠어요</option></select></label><label className={styles.dateInput}>연도 배기 방식<select value={answers.exhaustType} onChange={(e) => setAnswers({ ...answers, exhaustType: e.target.value })}><option value="">선택해 주세요</option><option>FF(개인 배기구)</option><option>FE(공동 배기구)</option><option>잘 모르겠어요</option></select></label></div><div className={styles.extraNotice}><b>기본 설치에 포함되는 항목</b><p>일산화탄소 경보기 의무 장착, 기본 온도조절기 설치, 폐보일러 회수, 배상책임보험, 도시가스 접수를 기본으로 안내합니다.</p></div><div className={styles.extraNotice}><b>사진 확인이 필요한 경우</b><p>각방제어 호환 장치, 복도식 아파트, 상향식 설치, 긴 연통, 고소 작업, 노후 배관은 사진과 현장을 확인한 뒤 작업 전에 먼저 설명드립니다. 별도 부가 작업 가격은 이 단계에서 임의로 표시하지 않습니다.</p></div><Next disabled={!answers.boilerPosition || !answers.exhaustType} onClick={() => setStep(9)} /></Question>}
           {step === 9 && <Question title="사진을 보내주시면 더 정확해요" hint="아래 항목이 잘 보이도록 최대 6장까지 촬영하거나 선택해 주세요."><div className={styles.photoGuide}>{["보일러 전체", "모델명 라벨", "하단 배관", "연통 연결부", "배수구 위치", "각방 조절기"].map((item, index) => <span key={item}><i>{index + 1}</i>{item}</span>)}</div><div className={styles.photoActions}><button onClick={() => cameraInput.current?.click()} disabled={photos.length >= 6}><b>카메라로 촬영</b><span>후면 카메라 열기</span></button><button onClick={() => galleryInput.current?.click()} disabled={photos.length >= 6}><b>갤러리에서 선택</b><span>여러 장 선택 가능</span></button><input ref={cameraInput} type="file" accept="image/*" capture="environment" hidden onChange={(e) => { addPhotos(e.target.files); e.target.value = ""; }} /><input ref={galleryInput} type="file" accept="image/*" multiple hidden onChange={(e) => { addPhotos(e.target.files); e.target.value = ""; }} /></div>{photos.length > 0 && <div className={styles.photoGrid}>{photos.map((photo, index) => <figure key={photo.id}><img src={photo.url} alt={`견적 사진 ${index + 1}`} /><figcaption>사진 {index + 1}</figcaption><button onClick={() => removePhoto(photo.id)} aria-label={`사진 ${index + 1} 삭제`}>×</button></figure>)}</div>}<div className={styles.photoStatus}><span>{photos.length} / 6장 선택</span><b>{photos.length >= 3 ? "사진 견적 준비 완료" : photos.length ? "3장 이상이면 더 정확해요" : "사진 없이도 상담 가능"}</b></div><p className={styles.photoPrivacy}>선택한 사진은 제출할 때 용량을 줄여 서울 리전의 비공개 저장소에 안전하게 전송됩니다.</p><button className={styles.next} onClick={() => setStep(10)}>{photos.length ? "이 사진으로 계속" : "사진 없이 계속"}</button></Question>}
           {step === 10 && <Question title="언제 설치를 원하시나요?" hint="희망 날짜와 방문하기 편한 시간대를 선택해 주세요."><div className={styles.dateTime}><label className={styles.dateInput}>희망 설치일<input type="date" min={new Date().toISOString().slice(0, 10)} value={answers.timing} onChange={(e) => setAnswers({ ...answers, timing: e.target.value })} /></label><label className={styles.dateInput}>희망 시간대<select value={answers.timingTime} onChange={(e) => setAnswers({ ...answers, timingTime: e.target.value })}><option value="">시간대를 선택해 주세요</option><option>오전 9시~11시</option><option>오전 11시~오후 1시</option><option>오후 1시~3시</option><option>오후 3시~5시</option><option>시간 협의</option></select></label></div><p className={styles.scheduleNote}>실제 방문 시간은 기사 배정 후 전화로 최종 확인해 드립니다.</p><Next disabled={!answers.timing || !answers.timingTime} onClick={() => setStep(11)} /></Question>}
-          {step === 11 && !submitted && <Question title="추천 결과가 나왔어요" hint="현장 사진 확인 후 정확한 모델과 설치 범위를 안내해 드립니다."><div className={styles.result}><span>{answers.installationType}</span><strong>{result.capacity}</strong><b>{result.model} · {result.type}</b><div className={styles.installSummary}>{answers.installationType === "기존 보일러 교체" ? <><b>{answers.currentBrand} 교체</b><span>{answers.replaceReason}</span></> : <><b>신규 설치 조건</b><span>{answers.installReadiness || "현장 확인 필요"}</span></>}</div><div className={styles.price}><small>예상 기본가</small><em>{result.price}</em><i>제품·기본 설치 참고가</i></div>{answers.extras.length > 0 && <div className={styles.selectedExtras}><span>선택한 추가 작업</span><p>{answers.extras.join(" · ")}</p><b>예상 추가금 +{extraTotal.toLocaleString("ko-KR")}원</b></div>}<div className={styles.totalPrice}><span>예상 합계</span><strong>{estimatedTotal}</strong></div><ul><li>선택 사진 {photos.length}장</li><li>희망 일정 {answers.timing} · {answers.timingTime}</li><li>{answers.installationType === "기존 보일러 교체" ? "기존 제품 철거·수거와 동일 위치 설치 여부 확인" : "신규 배관·연통·타공 범위 확인"}</li><li>수량·현장 조건에 따라 최종 가격이 달라질 수 있음</li></ul></div><div className={styles.contact}><label>이름<input value={answers.name} onChange={(e) => setAnswers({ ...answers, name: e.target.value })} placeholder="홍길동" /></label><label>휴대전화<input inputMode="tel" value={answers.phone} onChange={(e) => setAnswers({ ...answers, phone: e.target.value })} placeholder="010-0000-0000" /></label><label className={styles.consent}><input type="checkbox" checked={answers.consent} onChange={(e) => setAnswers({ ...answers, consent: e.target.checked })} /><span>상담을 위한 개인정보 수집·이용에 동의합니다.</span></label>{submitError && <p role="alert">{submitError}</p>}<button className={styles.submit} onClick={submit} disabled={submitting}>{submitting ? (photos.length ? `사진 ${photos.length}장 업로드 중...` : "안전하게 저장 중...") : "이 추천으로 상담 요청"}</button></div></Question>}
+          {step === 11 && !submitted && <Question title="추천 결과가 나왔어요" hint="현장 사진 확인 후 정확한 모델과 설치 범위를 안내해 드립니다."><div className={styles.result}><span>{answers.installationType}</span><strong>{result.capacity}</strong><b>{result.brand} · {result.model} · {result.type}</b><div className={styles.installSummary}>{answers.installationType === "기존 보일러 교체" ? <><b>{answers.currentBrand} 교체</b><span>{answers.replaceReason}</span></> : <><b>신규 설치 조건</b><span>{answers.installReadiness || "현장 확인 필요"}</span></>}</div><div className={styles.price}><small>조건 반영 예상가</small><em>{result.price}</em><i>제품과 기본 설치 참고 범위</i></div><div className={styles.totalPrice}><span>예상 견적 범위</span><strong>{estimatedTotal}</strong></div><div className={styles.extraNotice}><b>가격이 범위로 표시되는 이유</b><p>욕실 2곳의 동시 온수 사용, 단열이 약한 집, 필로티처럼 열 손실이 큰 구조는 한 단계 높은 용량이 필요할 수 있어 안전한 범위로 안내합니다.</p></div><ul><li>일산화탄소 경보기·기본 온도조절기 설치</li><li>폐보일러 회수·보험·도시가스 접수 안내</li><li>선택 사진 {photos.length}장 · 희망 일정 {answers.timing} {answers.timingTime}</li><li>세탁기 등으로 작업 공간이 좁으면 방문 전 이동 필요</li><li>특수 위치와 현장 조건은 사진 확인 후 사전 안내</li></ul></div><div className={styles.contact}><label>이름<input value={answers.name} onChange={(e) => setAnswers({ ...answers, name: e.target.value })} placeholder="홍길동" /></label><label>휴대전화<input inputMode="tel" value={answers.phone} onChange={(e) => setAnswers({ ...answers, phone: e.target.value })} placeholder="010-0000-0000" /></label><label className={styles.consent}><input type="checkbox" checked={answers.consent} onChange={(e) => setAnswers({ ...answers, consent: e.target.checked })} /><span>상담을 위한 개인정보 수집·이용에 동의합니다.</span></label>{submitError && <p role="alert">{submitError}</p>}<button className={styles.submit} onClick={submit} disabled={submitting}>{submitting ? (photos.length ? `사진 ${photos.length}장 업로드 중...` : "안전하게 저장 중...") : "이 추천으로 상담 요청"}</button></div></Question>}
           {step === 11 && submitted && <div className={styles.done}><span>REQUEST SAVED</span><h2>상담 요청을<br />접수했습니다.</h2><p>설치 조건과 추천 결과, 선택한 사진이 담당자 확인용 시스템에 안전하게 저장되었습니다.</p><button onClick={close}>확인</button></div>}
         </div>
         <footer>제품과 설치 가능 여부는 현장 확인 후 최종 확정됩니다.</footer>
