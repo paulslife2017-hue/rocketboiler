@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { serviceAreas } from "./regions/data";
+import { boilerBrands } from "./brands/data";
+import { boilerGuides } from "./guides/data";
 const siteUrl="https://rocketboiler.vercel.app";
-export default function sitemap():MetadataRoute.Sitemap{const now=new Date();return[{url:siteUrl,lastModified:now,changeFrequency:"weekly",priority:1},{url:`${siteUrl}/regions`,lastModified:now,changeFrequency:"monthly",priority:.9},...serviceAreas.map(({slug})=>({url:`${siteUrl}/regions/${slug}`,lastModified:now,changeFrequency:"monthly" as const,priority:.75}))]}
+export default function sitemap():MetadataRoute.Sitemap{const now=new Date();return[{url:siteUrl,lastModified:now,changeFrequency:"weekly",priority:1},{url:`${siteUrl}/regions`,lastModified:now,changeFrequency:"monthly",priority:.9},{url:`${siteUrl}/brands`,lastModified:now,changeFrequency:"monthly",priority:.9},{url:`${siteUrl}/guides`,lastModified:now,changeFrequency:"monthly",priority:.9},...serviceAreas.map(({slug})=>({url:`${siteUrl}/regions/${slug}`,lastModified:now,changeFrequency:"monthly" as const,priority:.8})),...boilerBrands.map(({slug})=>({url:`${siteUrl}/brands/${slug}`,lastModified:now,changeFrequency:"monthly" as const,priority:.85})),...boilerGuides.map(({slug})=>({url:`${siteUrl}/guides/${slug}`,lastModified:now,changeFrequency:"monthly" as const,priority:.85}))]}
 
