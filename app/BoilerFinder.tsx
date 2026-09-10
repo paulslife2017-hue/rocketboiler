@@ -7,6 +7,8 @@ type Answers = {
   region: string;
   installationType: string;
   currentBrand: string;
+  currentInstallYear: string;
+  currentModel: string;
   replaceReason: string;
   installReadiness: string;
   homeType: string;
@@ -130,6 +132,8 @@ export default function BoilerFinder() {
     if (!answers.name.trim() || !/^01[016789]-?\d{3,4}-?\d{4}$/.test(answers.phone) || !answers.consent) return;
     setSubmitting(true);
     setSubmitError("");
+    let leadSource = window.location.pathname;
+    try { leadSource = sessionStorage.getItem('rocket-ad-source') || leadSource; } catch { /* Keep the page source when storage is disabled. */ }
     try {
       const photoPaths: string[] = [];
       for (const photo of photos) {
@@ -146,7 +150,7 @@ export default function BoilerFinder() {
       const response = await fetch("/api/leads", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ source: window.location.pathname, ...answers, extras: [`희망 브랜드: ${answers.preferredBrand || "상담 후 추천"}`, `각방제어: ${answers.controllers}${answers.controllerBrand ? ` / ${answers.controllerBrand}` : ""}`, `보일러 위치: ${answers.boilerPosition}`, `배기 방식: ${answers.exhaustType}`, answers.currentInstallYear ? `기존 설치연도: ${answers.currentInstallYear}` : "", answers.currentModel ? `기존 모델명: ${answers.currentModel}` : "", answers.fuelOther ? `기타 연료: ${answers.fuelOther}` : ""].filter(Boolean), area: Number(answers.area), photoNames: photos.map((photo) => photo.file.name), photoPaths, recommendation: { ...result, estimatedTotal } }),
+        body: JSON.stringify({ source: leadSource, ...answers, extras: [`희망 브랜드: ${answers.preferredBrand || "상담 후 추천"}`, `각방제어: ${answers.controllers}${answers.controllerBrand ? ` / ${answers.controllerBrand}` : ""}`, `보일러 위치: ${answers.boilerPosition}`, `배기 방식: ${answers.exhaustType}`, answers.currentInstallYear ? `기존 설치연도: ${answers.currentInstallYear}` : "", answers.currentModel ? `기존 모델명: ${answers.currentModel}` : "", answers.fuelOther ? `기타 연료: ${answers.fuelOther}` : ""].filter(Boolean), area: Number(answers.area), photoNames: photos.map((photo) => photo.file.name), photoPaths, recommendation: { ...result, estimatedTotal } }),
       });
       if (!response.ok) throw new Error("save_failed");
       setSubmitted(true);

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { boilerGuides, getBoilerGuide } from "../data";\nimport SeoKeywordLinks from "../../components/SeoKeywordLinks";
+import { boilerGuides, getBoilerGuide } from "../data";
+import SeoKeywordLinks from "../../components/SeoKeywordLinks";
 import GuideSeoDetails from "../GuideSeoDetails";
 import styles from "../../regions/regions.module.css";
 

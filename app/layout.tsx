@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import BoilerFinder from "./BoilerFinder";
+import ConsultationWidget from "./components/ConsultationWidget";
 
 const siteUrl = "https://rocketboiler.vercel.app";
 
@@ -49,7 +49,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ko">
       <body>
         {children}
-        <BoilerFinder />
+        <ConsultationWidget />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusiness) }} />
       </body>
     </html>

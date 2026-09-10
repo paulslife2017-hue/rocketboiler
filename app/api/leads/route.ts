@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
   const search = request.nextUrl.searchParams.get("search")?.trim().slice(0, 80) || "";
   const status = request.nextUrl.searchParams.get("status")?.trim().slice(0, 30) || "";
   const region = request.nextUrl.searchParams.get("region")?.trim().slice(0, 30) || "";
-  const page = Math.max(1, Number(request.nextUrl.searchParams.get("page")) || 1);
+  const page = Math.min(1000000, Math.max(1, Math.floor(Number(request.nextUrl.searchParams.get("page")) || 1)));
   const limit = 20;
   const offset = (page - 1) * limit;
   const pattern = `%${search}%`;
@@ -81,11 +81,26 @@ export async function PATCH(request: NextRequest) {
   if (!authorized(request)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const body = await request.json();
   const allowed = ["new", "contacted", "scheduled", "completed", "cancelled", "sample"];
-  if (!allowed.includes(body.status) || !/^[0-9a-f-]{36}$/i.test(String(body.id || ""))) {
+  const hasStatus = Object.hasOwn(body, 'status');
+  const hasNotes = Object.hasOwn(body, 'notes');
+  const hasDate = Object.hasOwn(body, 'preferred_date');
+  const hasTime = Object.hasOwn(body, 'preferred_time');
+  const validDate = !body.preferred_date || (typeof body.preferred_date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(body.preferred_date) && !Number.isNaN(Date.parse(body.preferred_date)) && new Date(body.preferred_date).toISOString().slice(0, 10) === body.preferred_date);
+  if (!/^[0-9a-f-]{36}$/i.test(String(body.id || '')) || !(hasStatus || hasNotes || hasDate || hasTime)
+    || (hasStatus && !allowed.includes(body.status)) || (hasNotes && (typeof body.notes !== 'string' || body.notes.length > 4000))
+    || (hasDate && !validDate) || (hasTime && (typeof body.preferred_time !== 'string' || body.preferred_time.length > 50))) {
     return NextResponse.json({ error: "invalid_request" }, { status: 400 });
   }
-  const sql = database();
-  await sql`UPDATE boiler_leads SET status = ${body.status} WHERE id = ${body.id}`;
-  return NextResponse.json({ ok: true });
+  try {
+    const sql = database();
+    const rows = await sql`UPDATE boiler_leads SET
+      status = CASE WHEN ${hasStatus} THEN ${body.status || null} ELSE status END,
+      notes = CASE WHEN ${hasNotes} THEN ${body.notes ?? null} ELSE notes END,
+      preferred_date = CASE WHEN ${hasDate} THEN ${body.preferred_date || null} ELSE preferred_date END,
+      preferred_time = CASE WHEN ${hasTime} THEN ${body.preferred_time || null} ELSE preferred_time END
+      WHERE id = ${body.id} RETURNING id`;
+    if (!rows.length) return NextResponse.json({ error: 'not_found' }, { status: 404 });
+    return NextResponse.json({ ok: true });
+  } catch { return NextResponse.json({ error: 'save_failed' }, { status: 500 }); }
 }
 

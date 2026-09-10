@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getServiceArea, serviceAreas } from "../data";\nimport SeoKeywordLinks from "../../components/SeoKeywordLinks";
+import { getServiceArea, serviceAreas } from "../data";
+import SeoKeywordLinks from "../../components/SeoKeywordLinks";
 import styles from "../regions.module.css";
 const siteUrl = "https://rocketboiler.vercel.app";
 export function generateStaticParams(){ return serviceAreas.map(({slug})=>({slug})); }
