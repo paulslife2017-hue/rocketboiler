@@ -8,6 +8,7 @@ async function db() {
   const sql=database();
   initialization ??= sql.transaction([
     sql`CREATE TABLE IF NOT EXISTS boiler_model_prices (sku TEXT PRIMARY KEY, sale INTEGER NOT NULL CHECK(sale>=0), cost INTEGER CHECK(cost>=0), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`,
+    sql`ALTER TABLE boiler_model_prices ADD COLUMN IF NOT EXISTS cost_source TEXT NOT NULL DEFAULT ''`,
     sql`CREATE TABLE IF NOT EXISTS boiler_profit_records (id TEXT PRIMARY KEY, date DATE NOT NULL, model TEXT NOT NULL, reference TEXT NOT NULL DEFAULT '', quantity INTEGER NOT NULL CHECK(quantity>0), sale INTEGER NOT NULL CHECK(sale>=0), cost INTEGER CHECK(cost>=0), labor INTEGER NOT NULL CHECK(labor BETWEEN 80000 AND 100000), other INTEGER NOT NULL CHECK(other>=0), status TEXT NOT NULL CHECK(status IN ('estimate','actual','void')), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`
   ]).catch(error=>{initialization=undefined;throw error;});
   await initialization;return sql;
@@ -34,7 +35,8 @@ export async function POST(request:NextRequest) {
     if(!money(body.sale)||(body.cost!==null&&!money(body.cost)))return NextResponse.json({error:'금액은 0 이상의 정수로 입력해 주세요. 원가 미확인은 비워 주세요.'},{status:400});
     if(body.action==='price') {
       if(typeof body.sku!=='string'||!/^[\w.-]{1,80}$/.test(body.sku))return NextResponse.json({error:'모델을 선택해 주세요.'},{status:400});
-      const sql=await db();await sql`INSERT INTO boiler_model_prices(sku,sale,cost) VALUES(${body.sku},${body.sale},${body.cost}) ON CONFLICT(sku) DO UPDATE SET sale=EXCLUDED.sale,cost=EXCLUDED.cost,updated_at=NOW()`;
+      const source=typeof body.cost_source==='string'?body.cost_source.slice(0,300):'';
+      const sql=await db();await sql`INSERT INTO boiler_model_prices(sku,sale,cost,cost_source) VALUES(${body.sku},${body.sale},${body.cost},${source}) ON CONFLICT(sku) DO UPDATE SET sale=EXCLUDED.sale,cost=EXCLUDED.cost,cost_source=EXCLUDED.cost_source,updated_at=NOW()`;
     }else if(body.action==='record') {
       const validDate=typeof body.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(body.date)&&!Number.isNaN(Date.parse(body.date))&&new Date(body.date).toISOString().slice(0,10)===body.date;
       if(!/^[0-9a-f-]{36}$/i.test(body.id||'')||!validDate||typeof body.model!=='string'||!body.model.trim()||body.model.length>150||typeof body.reference!=='string'||body.reference.length>200||!Number.isInteger(body.quantity)||body.quantity<1||body.quantity>1000||!money(body.labor)||body.labor<80000||body.labor>100000||!money(body.other)||!['estimate','actual','void'].includes(body.status))return NextResponse.json({error:'날짜·모델·수량과 기사비(8만~10만 원)를 확인해 주세요.'},{status:400});
