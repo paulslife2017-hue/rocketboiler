@@ -1,3 +1,4 @@
+import { earningsDb } from "../admin/earnings/store";
 import { neon } from "@neondatabase/serverless";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -92,8 +93,9 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "invalid_request" }, { status: 400 });
   }
   try {
-    const sql = database();
+    const sql = await earningsDb();
     const rows = await sql`UPDATE boiler_leads SET
+      completed_at = CASE WHEN ${hasStatus} AND ${body.status || null}='completed' AND status!='completed' THEN NOW() ELSE completed_at END,
       status = CASE WHEN ${hasStatus} THEN ${body.status || null} ELSE status END,
       notes = CASE WHEN ${hasNotes} THEN ${body.notes ?? null} ELSE notes END,
       preferred_date = CASE WHEN ${hasDate} THEN ${body.preferred_date || null} ELSE preferred_date END,

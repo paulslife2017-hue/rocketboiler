@@ -210,3 +210,13 @@
 .profitWorkspace .stockActions button[aria-pressed=true] { border-color: var(--gold); color: var(--gold); background: #f0a93a12; }
 .profitWorkspace .setupForm .hint { padding-left: 0; padding-right: 0; }
 @media(max-width:640px){ .profitWorkspace .stockActions button { flex:1; min-width: 85px; } .profitWorkspace .notice { overflow-wrap:anywhere; } }
+.profitWorkspace > .panel > .dateInputs { padding: 0 24px 18px; }
+.profitWorkspace .sectionTitle > select { width: auto; max-width: 220px; }
+.profitWorkspace .sectionTitle .hint { padding: 8px 0 0; }
+.profitWorkspace .table td { overflow-wrap: anywhere; }
+.profitWorkspace .table select { min-width: 100px; }
+@media(max-width:640px){
+  .profitWorkspace > .panel > .dateInputs { padding: 0 18px 10px; }
+  .profitWorkspace .sectionTitle > select { max-width: 100%; }
+  .profitWorkspace .table select { width: 140px; max-width: 100%; }
+}

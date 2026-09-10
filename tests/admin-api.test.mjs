@@ -17,7 +17,7 @@ function compile(path, imports = {}, env = {}) {
 const shared = compile('../app/admin/shared.ts');
 const next = { NextResponse: { json: (data, options) => Response.json(data, options) } };
 const request = (body, authorized = true) => ({ headers: new Headers(authorized ? { authorization: 'Bearer test-only' } : {}), json: async () => body, nextUrl: new URL('https://example.test/api/leads') });
-function route(query) { return compile('../app/api/leads/route.ts', { '@neondatabase/serverless': { neon: () => query }, 'next/server': next }, { ADMIN_PASSWORD: 'test-only', DATABASE_URL: 'test-only' }); }
+function route(query) { return compile('../app/api/leads/route.ts', { '@neondatabase/serverless': { neon: () => query }, '../admin/earnings/store': { earningsDb: async () => query }, 'next/server': next }, { ADMIN_PASSWORD: 'test-only', DATABASE_URL: 'test-only' }); }
 
 test('ad attribution distinguishes paid clicks from organic and legacy visits', () => {
   for (const source of ['/', '/regions/geumcheon', '/?utm_source=google&utm_medium=organic', '/?utm_source=naver']) assert.equal(shared.channelOf(source), 'unknown');
@@ -45,9 +45,9 @@ test('notes and schedule updates preserve status; missing records and DB failure
   const api = route(async (_strings, ...args) => { values = args; return [{ id }]; });
   assert.equal((await api.PATCH(request({ id, notes: '통화 완료', preferred_date: '2026-10-01', preferred_time: '오전 10시' }))).status, 200);
   assert.equal(values[0], false);
-  assert.equal(values[2], true);
-  assert.equal(values[3], '통화 완료');
-  assert.equal(values[5], '2026-10-01');
+  assert.equal(values[4], true);
+  assert.equal(values[5], '통화 완료');
+  assert.equal(values[7], '2026-10-01');
   assert.equal((await route(async () => []).PATCH(request({ id, status: 'completed' }))).status, 404);
   assert.equal((await route(async () => { throw new Error('offline'); }).PATCH(request({ id, status: 'completed' }))).status, 500);
 });

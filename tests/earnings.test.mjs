@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import ts from 'typescript';
+function compile(file,modules={}){const exports={};vm.runInNewContext(ts.transpileModule(readFileSync(new URL('../app/'+file,import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{exports,require:n=>modules[n]});return exports;}
+const catalog=compile('boiler-catalog.ts');const pricing=compile('website-pricing.ts');const profit=compile('admin/profit.ts',{'../boiler-catalog':catalog});
+const api=compile('admin/earnings.ts',{'./profit':profit,'../website-pricing':pricing});
+test('homepage estimates use the same live finder price calculation',()=>{const result=api.websiteQuote('NAV-NCB354-15K');const expected=pricing.recommendation('21','있어요','경동나비엔','1개','','','');assert.equal(result.min,expected.minPrice);assert.equal(result.max,expected.maxPrice);assert.equal(api.websiteQuote('KIT-L11-16H'),null);});
+test('only complete and unambiguous model identifiers auto-match',()=>{assert.equal(api.matchSku('NAV-NCB354-15K',''), 'NAV-NCB354-15K');assert.equal(api.matchSku('','경동 NCB 354-15K 설치'), 'NAV-NCB354-15K');assert.equal(api.matchSku('','NCB354-15K / NCB354-18K'),null);assert.equal(api.matchSku('','콘덴싱 15'),null);assert.equal(api.matchSku('','NCB354-15KEXTRA'),null);});
+test('net paid amount is total, technician fee and product cost apply per installed unit',()=>{const row=api.calculateSale({id:'naver:1',channel:'naver',status:'sold',amount:1300000,quantity:2,cost:420000,labor:80000});assert.equal(row.profit,300000);assert.equal(api.calculateSale({...row,labor:100000}).profit,260000);const pending=api.calculateSale({...row,status:'pending'});const cancelled=api.calculateSale({...row,status:'cancelled'});const linked=api.calculateSale({...row,status:'linked'});const missing=api.calculateSale({...row,id:'missing',cost:null});const noAmount=api.calculateSale({...row,id:'noAmount',amount:null});const totals=api.totalsOf([row,pending,cancelled,linked,missing,noAmount]);assert.equal(totals.revenue,2600000);assert.equal(totals.profit,300000);assert.equal(totals.missing,2);assert.equal(totals.pending,1);});

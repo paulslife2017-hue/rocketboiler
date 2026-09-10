@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
+import { amountOf } from '../../../admin/earnings';
 import { hash } from 'bcryptjs';
 import { database, initialize } from '../operations/store';
 
@@ -55,11 +56,11 @@ export async function POST(request: NextRequest) {
       const product = content.productOrder || {}; const order = content.order || {};
       const id = String(product.productOrderId || item.productOrderId || ''); const quantity = Number(product.quantity);
       if (!id || !Number.isInteger(quantity) || quantity <= 0 || !product.productName) throw new Error('주문 번호·수량을 확인할 수 없는 항목이 있습니다. 저장하지 않았습니다.');
-      return { id, quantity, product: String(product.productName).slice(0,300), option: String(product.productOption || '').slice(0,300), code: String(product.optionManageCode || product.sellerProductCode || '').slice(0,80), customer: String(order.ordererName || '').slice(0,100), phone: String(order.ordererTel || '').slice(0,40), date: String(order.orderDate || body.date), status: String(product.productOrderStatus || 'UNKNOWN') };
+      return { amount: amountOf(product.remainPaymentAmount ?? product.totalPaymentAmount), remaining: amountOf(product.remainQuantity), paid: String(order.paymentDate || order.orderDate || body.date), id, quantity, product: String(product.productName).slice(0,300), option: String(product.productOption || '').slice(0,300), code: String(product.optionManageCode || product.sellerProductCode || '').slice(0,80), customer: String(order.ordererName || '').slice(0,100), phone: String(order.ordererTel || '').slice(0,40), date: String(order.orderDate || body.date), status: String(product.productOrderStatus || 'UNKNOWN') };
     });
-    if (parsed.length) await sql.transaction(parsed.map((item) => sql`INSERT INTO boiler_store_orders(id,ordered_at,customer,phone,product,option_name,seller_code,quantity,status)
-      VALUES(${item.id},${item.date},${item.customer},${item.phone},${item.product},${item.option},${item.code},${item.quantity},${item.status})
-      ON CONFLICT(id) DO UPDATE SET customer=EXCLUDED.customer,phone=EXCLUDED.phone,product=EXCLUDED.product,option_name=EXCLUDED.option_name,seller_code=EXCLUDED.seller_code,status=EXCLUDED.status,
+    if (parsed.length) await sql.transaction(parsed.map((item) => sql`INSERT INTO boiler_store_orders(id,ordered_at,customer,phone,product,option_name,seller_code,quantity,status,payment_amount,remaining_quantity,payment_date)
+      VALUES(${item.id},${item.date},${item.customer},${item.phone},${item.product},${item.option},${item.code},${item.quantity},${item.status},${item.amount},${item.remaining},${item.paid})
+      ON CONFLICT(id) DO UPDATE SET customer=EXCLUDED.customer,phone=EXCLUDED.phone,product=EXCLUDED.product,option_name=EXCLUDED.option_name,seller_code=EXCLUDED.seller_code,status=EXCLUDED.status,payment_amount=EXCLUDED.payment_amount,remaining_quantity=EXCLUDED.remaining_quantity,payment_date=EXCLUDED.payment_date,
         quantity=CASE WHEN boiler_store_orders.dispatched THEN boiler_store_orders.quantity ELSE EXCLUDED.quantity END,updated_at=NOW()`));
     return NextResponse.json({ ok: true, count: parsed.length });
   } catch (error) { return NextResponse.json({ error: error instanceof Error && /네이버|주문|조회|저장하지/.test(error.message) ? error.message : '연결 정보를 확인하고 다시 시도해 주세요.' }, { status: 500 }); }
