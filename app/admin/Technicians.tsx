@@ -43,7 +43,7 @@ export default function Technicians({ session, leadId = '' }: { session: string;
       {data.technicians.find(t => t.id === chosen) && <p className={s.hint}>연락처: {data.technicians.find(t => t.id === chosen)?.phone}</p>}
       <p className={s.hint}>기사 관리에서 등록한 기사를 선택하세요. 배정은 관리자 기록에 저장되며 기사에게 자동 발송되지는 않습니다.</p><button className={s.primary} disabled={busy}>{busy ? '저장 중…' : '기사 배정 저장'}</button>
     </form> : <>
-      <form onSubmit={event => { event.preventDefault(); void save({ action: 'save', ...form }); }}>
+      <form className={s.technicianForm} onSubmit={event => { event.preventDefault(); void save({ action: 'save', ...form }); }}>
         <h3>{form.id ? '기사 정보 수정' : '기사 등록'}</h3><div className={s.dateInputs}>
           <label className={s.field}>기사 이름<input required maxLength={40} value={form.name} disabled={busy} onChange={event => setForm({ ...form, name: event.target.value })} /></label>
           <label className={s.field}>기사 연락처<input required type="tel" maxLength={15} placeholder="010-0000-0000" value={form.phone} disabled={busy} onChange={event => setForm({ ...form, phone: event.target.value })} /></label>
