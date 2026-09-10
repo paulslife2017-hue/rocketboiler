@@ -17,3 +17,102 @@
 @media (max-width: 600px) { .technicianForm { padding: 0 16px 16px; } }
 
 .stockActions { display: flex; gap: 8px; white-space: nowrap; }
+
+/* Shared admin finish and the inventory workspace. */
+.shell { --border: #253244; --surface: #121e2c; --muted: #9baabd; background: radial-gradient(ellipse at 80% 0, #19273766, transparent 45%), var(--bg); }
+.sidebar { padding-top: 30px; gap: 24px; }
+.navigation { border-radius: 14px; background: #111d2bea; padding: 6px; }
+.navigation button { min-height: 46px; border-radius: 9px; gap: 9px; }
+.navigation button[aria-current] { background: #efb14b12; box-shadow: inset 0 -2px 0 #efb14b; }
+.navigation button:hover:not([aria-current]) { background: #ffffff05; color: var(--ink); }
+.heading { padding: 4px 0; margin-bottom: 24px; }
+.heading h1 { letter-spacing: -.035em; font-size: 28px; }
+.heading p { color: #a4b1c2; }
+.panel { border-radius: 16px; box-shadow: 0 8px 30px #0000000d; }
+.sectionTitle { padding: 24px; }
+.sectionTitle h2 { letter-spacing: -.025em; }
+.metrics article,.metrics button { border-radius: 14px; padding: 20px 24px; }
+.metrics strong { font-weight: 700; letter-spacing: -.04em; margin: 8px 0 6px; }
+.metrics em { font-size: 12px; }
+.table th { font-size: 12px; background: #0e1925; padding-top: 13px; padding-bottom: 13px; }
+.table td { border-bottom-color: #233145a6; }
+.table tbody tr:last-child td { border-bottom: 0; }
+.table tbody tr:hover td { background: #ffffff03; }
+.detailHead { position: sticky; top: 0; z-index: 1; background: var(--surface); }
+.detailBody > .primary { min-height: 46px; }
+.close { flex-shrink: 0; }
+.inventoryMetrics { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin-bottom: 24px; }
+.inventoryMetrics article { position: relative; overflow: hidden; }
+.inventoryMetrics article::after { content: ''; position: absolute; top: 24px; right: 24px; width: 7px; height: 7px; border-radius: 50%; background: #7c8da5; }
+.inventoryMetrics article[data-accent=gold]::after { background: var(--gold); }
+.inventoryMetrics article[data-accent=green]::after { background: var(--green); }
+.inventoryPanel .sectionTitle { padding-bottom: 12px; }
+.inventoryEyebrow { display: block; color: #8b9caf; font-size: 10px; font-weight: 650; letter-spacing: .15em; margin-bottom: 7px; }
+.inventoryPanel .sectionTitle h2 { font-size: 21px; }
+.inventoryPanel .sectionTitle h2 span { background: #263246; color: #c2cddd; padding: 3px 8px; border-radius: 6px; font-size: 12px; vertical-align: middle; }
+.inventoryPanel > .hint { padding: 0 24px 22px; font-size: 13px; }
+.inventoryPanel > .hint:last-of-type { padding: 18px 24px; border-top: 1px solid var(--border); background: #0d182333; font-size: 12px; }
+.inventoryToolbar { display: flex; align-items: center; gap: 20px; padding: 0 24px 20px; }
+.inventorySearch { position: relative; display: flex; align-items: center; width: min(480px,100%); }
+.inventorySearch svg { position: absolute; left: 14px; color: #8b9caf; pointer-events: none; }
+.inventorySearch input { padding: 12px 14px 12px 42px; border-radius: 10px; font-size: 14px; background: #0c1723; }
+.resultCount { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.resultCount b { margin-left: 5px; color: var(--ink); }
+.inventoryFilters { display: flex; gap: 6px; padding: 0 24px 20px; overflow-x: auto; }
+.inventoryFilters button { border: 1px solid transparent; color: var(--muted); background: transparent; border-radius: 8px; padding: 7px 11px; font-size: 13px; white-space: nowrap; }
+.inventoryFilters button span { margin-left: 7px; font-size: 11px; color: #8d9db2; }
+.inventoryFilters button[aria-pressed=true] { background: #273549; color: #f3f6fa; border-color: #35455b; }
+.inventoryFilters button[aria-pressed=true] span { color: #e2bd7b; }
+.inventoryFilters button:hover { background: #25324488; }
+.inventoryTable th,.inventoryTable td { padding-left: 24px; padding-right: 24px; }
+.inventoryTable th:not(:first-child),.inventoryTable td:not(:first-child) { text-align: center; }
+.inventoryTable td { padding-top: 19px; padding-bottom: 19px; }
+.inventoryTable .modelCell { min-width: 230px; }
+.modelCell b { font-size: 15px; font-weight: 650; letter-spacing: .005em; }
+.modelCell small { margin-top: 4px; font-size: 12px; }
+.modelCell small + small { color: #ac9270; font-size: 11px; }
+.stockNumber { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.stockNumber small { display: inline; font-size: 12px; margin-left: 4px; font-weight: 400; }
+.unregistered { border: 1px dashed #3b495b; color: #8fa0b4; border-radius: 6px; padding: 4px 9px; font-size: 11px; font-weight: 500; }
+.stockDash { color: #647489; }
+.inventoryTable .stockActions { justify-content: center; }
+.registerStock { color: #efbf70; background: #f0a93a09; border: 1px solid #eab66040; padding: 8px 13px; border-radius: 8px; font-size: 13px!important; font-weight: 600!important; }
+.registerStock:hover { background: #f0a93a1c; border-color: #eab66088; }
+.inventoryPanel .dialog .hint { padding: 0 0 16px; font-size: 13px; }
+.inventoryPanel .dialog .field { margin-bottom: 22px; }
+.inventoryPanel .dialog .primary { width: 100%; margin-top: 10px; }
+.inventoryPanel .dialog .detailBody > p { margin-bottom: 18px; }
+@media (max-width: 800px) {
+  .sidebar { padding-top: 20px; gap: 18px; }
+  .navigation { scrollbar-width: thin; }
+  .navigation button { min-height: 42px; }
+  .heading { margin-bottom: 20px; }
+  .heading h1 { font-size: 25px; }
+  .inventoryMetrics { gap: 8px; }
+  .inventoryMetrics article { padding: 15px 12px; }
+  .inventoryMetrics article::after { display: none; }
+  .inventoryMetrics article > span { font-size: 12px; }
+  .inventoryMetrics strong { font-size: 28px; margin: 5px 0 0; }
+  .inventoryMetrics strong small { font-size: 11px; margin-left: 3px; }
+  .inventoryMetrics em { display: none; }
+  .inventoryPanel .sectionTitle { padding: 20px 18px 12px; }
+  .inventoryPanel .sectionTitle h2 { font-size: 19px; }
+  .inventoryPanel .sectionTitle > button { font-size: 12px!important; padding: 6px 0; }
+  .inventoryPanel > .hint { padding: 0 18px 18px; }
+  .inventoryToolbar { padding: 0 18px 16px; }
+  .inventorySearch { width: 100%; }
+  .resultCount { display: none; }
+  .inventoryFilters { padding: 0 18px 18px; gap: 3px; }
+  .inventoryFilters button { padding: 7px 8px; font-size: 12px; }
+  .inventoryFilters button span { margin-left: 4px; }
+  .inventoryTable,.inventoryTable tbody { display: block; width: 100%; white-space: normal; }
+  .inventoryTable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .inventoryTable tr { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border-top: 1px solid var(--border); padding: 18px; gap: 15px 8px; }
+  .inventoryTable td { border: 0; padding: 0; }
+  .inventoryTable td:first-child { grid-column: 1/-1; min-width: 0; }
+  .inventoryTable td:last-child { grid-column: 1/-1; }
+  .inventoryTable td[data-label]::before { content: attr(data-label); display: block; font-size: 11px; color: #8d9db2; font-weight: 400; margin-bottom: 8px; }
+  .inventoryTable .stockActions { justify-content: stretch; }
+  .inventoryTable .stockActions button { flex: 1; min-height: 40px; }
+  .inventoryPanel > .hint:last-of-type { padding: 16px 18px; }
+}
