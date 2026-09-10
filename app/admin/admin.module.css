@@ -18,6 +18,9 @@
 
 .stockActions { display: flex; gap: 8px; white-space: nowrap; }
 .mobileNav { display: none; }
+.shell footer { background: transparent; box-shadow: none; clip-path: none; max-width: none; }
+.shell .footer { padding: 0; margin: 26px 0 0; }
+.shell .scheduleCard footer { display: block; padding: 14px 0 0; margin: 18px 0 0; }
 
 /* Shared admin finish and the inventory workspace. */
 .shell { --border: #253244; --surface: #121e2c; --muted: #9baabd; background: radial-gradient(ellipse at 80% 0, #19273766, transparent 45%), var(--bg); }
