@@ -24,8 +24,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json(); await initialize(); const sql = database();
     if (body.action === 'product') {
       if (typeof body.sku !== 'string' || !/^[\w.-]{1,80}$/.test(body.sku) || typeof body.model !== 'string' || !body.model.trim() || body.model.length > 150 || !Number.isInteger(body.quantity) || body.quantity < 0 || body.quantity > 100000) return NextResponse.json({ error: '모델명, 관리 코드와 수량을 확인해 주세요.' }, { status: 400 });
-      const rows = await sql`INSERT INTO boiler_inventory(sku,brand,model,on_hand) VALUES(${body.sku},${String(body.brand || '').slice(0,50)},${body.model.trim()},${body.quantity}) ON CONFLICT DO NOTHING RETURNING sku`;
+      const rows = await sql`WITH added AS (INSERT INTO boiler_inventory(sku,brand,model,on_hand) VALUES(${body.sku},${String(body.brand || '').slice(0,50)},${body.model.trim()},${body.quantity}) ON CONFLICT DO NOTHING RETURNING sku), movement AS (INSERT INTO boiler_stock_movements(id,sku,delta,reason) SELECT ${randomUUID()},sku,${body.quantity},'초기 재고 등록' FROM added RETURNING id) SELECT sku FROM added`;
       if (!rows.length) return NextResponse.json({ error: '이미 등록된 관리 코드입니다. 입고·조정 기능을 사용해 주세요.' }, { status: 409 });
+    } else if (body.action === 'stocktake') {
+      if (!Number.isInteger(body.quantity) || body.quantity < 0 || body.quantity > 100000 || !Number.isInteger(body.expected) || body.expected < 0 || typeof body.reason !== 'string' || !body.reason.trim()) return NextResponse.json({ error: '실제 수량과 실사 사유를 입력해 주세요.' }, { status: 400 });
+      const rows = await sql`WITH changed AS (UPDATE boiler_inventory SET on_hand=${body.quantity},updated_at=NOW() WHERE sku=${body.sku} AND on_hand=${body.expected} RETURNING sku)
+        INSERT INTO boiler_stock_movements(id,sku,delta,reason) SELECT ${randomUUID()},sku,${body.quantity-body.expected},${'실사 · '+body.reason.slice(0,250)} FROM changed RETURNING id`;
+      if (!rows.length) return NextResponse.json({ error: '다른 작업으로 재고가 변경됐습니다. 창을 닫고 최신 수량에서 다시 실사해 주세요.' }, { status: 409 });
     } else if (body.action === 'adjust') {
       if (!Number.isInteger(body.delta) || !body.delta || Math.abs(body.delta) > 100000 || typeof body.reason !== 'string' || !body.reason.trim()) return NextResponse.json({ error: '변경 수량과 사유를 입력해 주세요.' }, { status: 400 });
       const rows = await sql`WITH changed AS (UPDATE boiler_inventory SET on_hand=on_hand+${body.delta},updated_at=NOW() WHERE sku=${body.sku} AND on_hand+${body.delta}>=0 RETURNING sku)
