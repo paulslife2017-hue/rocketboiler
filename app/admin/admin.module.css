@@ -203,3 +203,10 @@
   .inventoryTable .stockActions button { flex: 1; min-height: 40px; }
   .inventoryPanel > .hint:last-of-type { padding: 16px 18px; }
 }
+
+.profitWorkspace > .panel { margin-bottom: 22px; }
+.profitWorkspace .metrics strong { font-size: clamp(20px,2.2vw,29px); overflow-wrap: anywhere; }
+.profitWorkspace .stockActions { flex-wrap: wrap; margin: 12px 0 20px; }
+.profitWorkspace .stockActions button[aria-pressed=true] { border-color: var(--gold); color: var(--gold); background: #f0a93a12; }
+.profitWorkspace .setupForm .hint { padding-left: 0; padding-right: 0; }
+@media(max-width:640px){ .profitWorkspace .stockActions button { flex:1; min-width: 85px; } .profitWorkspace .notice { overflow-wrap:anywhere; } }
