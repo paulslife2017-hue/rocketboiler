@@ -160,6 +160,15 @@ export default function Home() {
       <footer>
         <div className="footer-brand"><b>로켓보일러</b><span>서울·경기 가정용 보일러 교체·설치</span></div>
         <div className="footer-links"><a href="#service">서비스 안내</a><a href="#price">비용 안내</a><a href="#area">출장 지역</a><a href="#faq">자주 묻는 질문</a></div>
+        <section className="footer-business" aria-label="사업자 정보">
+          <h2>사업자 정보</h2>
+          <dl>
+            <div><dt>상호</dt><dd>보일러 마스터</dd></div>
+            <div><dt>대표자</dt><dd>김명진</dd></div>
+            <div><dt>사업자등록번호</dt><dd>114-25-71582</dd></div>
+            <div className="footer-business-address"><dt>사업장 주소</dt><dd>서울특별시 금천구 시흥대로 97, 26동 2층 202호 (시흥동, 시흥유통상가)</dd></div>
+          </dl>
+        </section>
         <p>로켓보일러 | 서울 전 지역·경기 9개 시·인천 보일러 교체·설치<br />인천 영종도·강화군 등 도서 지역 제외<br />© 2026 로켓보일러. All rights reserved.</p>
       </footer>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
