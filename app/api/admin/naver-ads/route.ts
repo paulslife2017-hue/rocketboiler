@@ -1,6 +1,6 @@
 import {NextRequest,NextResponse} from 'next/server';
 import {database,initialize} from '../operations/store';
-import {campaigns,siteGroups,SITE_HOST,decrypt,encrypt,request as adsRequest,statsOf,validPeriod,type Credentials} from './client';
+import {campaigns,setGroupLock,siteGroups,SITE_HOST,decrypt,encrypt,request as adsRequest,statsOf,validPeriod,type Credentials} from './client';
 import {channelOf,koreaDate} from '../../../admin/shared';
 export const runtime='nodejs';
 export const maxDuration=60;
@@ -22,7 +22,17 @@ export async function GET(r:NextRequest){
 }
 export async function POST(r:NextRequest){
   if(!authorized(r))return NextResponse.json({error:'관리자 로그인이 필요합니다.'},{status:401});
-  try{const b=await r.json();if(typeof b.customerId!=='string'||!/^\d{1,20}$/.test(b.customerId)||typeof b.apiKey!=='string'||b.apiKey.length<10||b.apiKey.length>300||typeof b.secretKey!=='string'||b.secretKey.length<10||b.secretKey.length>300)return NextResponse.json({error:'광고 계정과 인증 정보를 확인해 주세요.'},{status:400});
+  try{const b=await r.json();
+    if(b.action==='toggle'){
+      if(typeof b.id!=='string'||!/^grp-[\w-]+$/.test(b.id)||typeof b.paused!=='boolean'||typeof b.expectedPaused!=='boolean')return NextResponse.json({error:'광고그룹과 ON/OFF 설정을 확인해 주세요.'},{status:400});
+      await initialize();const sql=database();const stored=await sql`SELECT encrypted FROM boiler_integrations WHERE name='naver_searchads'`;if(!stored.length)return NextResponse.json({error:'광고 계정 연결이 필요합니다.'},{status:409});
+      const c=decrypt(stored[0].encrypted);const scope=await siteGroups(c);
+      if(!scope.groups.some(g=>g.nccAdgroupId===b.id))return NextResponse.json({error:'로켓보일러 사이트에 연결된 광고그룹만 변경할 수 있습니다.'},{status:403});
+      const group=await adsRequest(c,'/ncc/adgroups/'+b.id);
+      if(group.userLock!==b.expectedPaused)return NextResponse.json({error:'광고 설정이 변경됐습니다. 새로 조회한 뒤 다시 선택해 주세요.'},{status:409});
+      const result=await setGroupLock(c,group,b.paused);return NextResponse.json({ok:true,...result});
+    }
+    if(typeof b.customerId!=='string'||!/^\d{1,20}$/.test(b.customerId)||typeof b.apiKey!=='string'||b.apiKey.length<10||b.apiKey.length>300||typeof b.secretKey!=='string'||b.secretKey.length<10||b.secretKey.length>300)return NextResponse.json({error:'광고 계정과 인증 정보를 확인해 주세요.'},{status:400});
     const c:Credentials={customerId:b.customerId,apiKey:b.apiKey.trim(),secretKey:b.secretKey.trim()};const list=await campaigns(c);await initialize();const sql=database();await sql`INSERT INTO boiler_integrations(name,encrypted) VALUES('naver_searchads',${encrypt(c)}) ON CONFLICT(name) DO UPDATE SET encrypted=EXCLUDED.encrypted,updated_at=NOW()`;return NextResponse.json({ok:true,customerId:c.customerId,campaignCount:list.length});
   }catch(e){return failure(e);}
 }

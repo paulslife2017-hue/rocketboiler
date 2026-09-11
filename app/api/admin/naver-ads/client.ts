@@ -32,6 +32,16 @@ export async function request(c:Credentials,path:string,params?:URLSearchParams)
   if(!response.ok)throw Error(response.status===429?'네이버 조회 한도에 도달했습니다. 잠시 후 다시 조회해 주세요.':`네이버 검색광고 조회 실패 (${response.status}). API 권한과 연결 정보를 확인해 주세요.`);
   return response.json();
 }
+export async function setGroupLock(c:Credentials,group:Record<string,unknown>,paused:boolean){
+  const id=String(group.nccAdgroupId);if(!/^grp-[\w-]+$/.test(id))throw Error('네이버 광고그룹 ID를 확인해 주세요.');
+  const path='/ncc/adgroups/'+id;const timestamp=String(Date.now());
+  const signature=createHmac('sha256',c.secretKey).update(`${timestamp}.PUT.${path}`).digest('base64');
+  const response=await fetch('https://api.searchad.naver.com'+path+'?fields=userLock',{method:'PUT',headers:{'content-type':'application/json; charset=UTF-8','X-Timestamp':timestamp,'X-API-KEY':c.apiKey,'X-Customer':c.customerId,'X-Signature':signature},body:JSON.stringify({...group,userLock:paused}),signal:AbortSignal.timeout(12000),cache:'no-store'});
+  if(!response.ok)throw Error(`네이버 광고 설정 변경 실패 (${response.status}). 다시 조회해 주세요.`);
+  const updated=await request(c,path);
+  if(updated.userLock!==paused)throw Error('네이버 설정 반영을 아직 확인하지 못했습니다. 새로고침 후 상태를 확인해 주세요.');
+  return {id,paused:updated.userLock,status:updated.status,statusReason:updated.statusReason};
+}
 export async function campaigns(c:Credentials):Promise<Campaign[]>{const data=await request(c,'/ncc/campaigns');if(!Array.isArray(data)||data.some(p=>typeof p.nccCampaignId!=='string'||typeof p.name!=='string'))throw Error('네이버 캠페인 응답을 확인할 수 없습니다.');return data;}
 export function statsOf(data:unknown):Stats{
   if(!data||typeof data!=='object'||!('data' in data)||!Array.isArray(data.data))throw Error('네이버 통계 응답을 확인할 수 없습니다.');

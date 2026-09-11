@@ -24,3 +24,17 @@ test('site groups exclude unrelated groups even inside the same campaign',async(
  };
  const scope=await client.siteGroups(credentials);assert.deepEqual(Array.from(scope.groups,g=>g.nccAdgroupId),['yes']);assert.equal(scope.mixed,1);
 });
+test('toggle signs only userLock update and verifies the returned setting',async()=>{
+ let puts=0;transport=async(url,options)=>{if(options.method==='PUT'){puts++;assert.equal(url,'https://api.searchad.naver.com/ncc/adgroups/grp-boiler?fields=userLock');assert.equal(JSON.parse(options.body).userLock,true);assert.equal(options.headers['X-Signature'],crypto.createHmac('sha256',credentials.secretKey).update(options.headers['X-Timestamp']+'.PUT./ncc/adgroups/grp-boiler').digest('base64'));return Response.json({});}return Response.json({userLock:true,status:'PAUSED'});};
+ const result=await client.setGroupLock(credentials,{nccAdgroupId:'grp-boiler',userLock:false,bidAmt:100},true);assert.equal(result.paused,true);assert.equal(puts,1);
+ transport=async(_url,options)=>Response.json(options.method==='PUT'?{}:{userLock:false});await assert.rejects(client.setGroupLock(credentials,{nccAdgroupId:'grp-boiler'},true),/확인하지/);
+});
+test('toggle rejects unrelated sites and stale state before mutation',async()=>{
+ let writes=0;let scope=[];
+ const api=compile('api/admin/naver-ads/route.ts',{'next/server':{NextResponse:{json:(d,o)=>Response.json(d,o)}},'../operations/store':{initialize:async()=>{},database:()=>async()=>[{encrypted:'test'}]},'./client':{...client,decrypt:()=>credentials,siteGroups:async()=>({groups:scope}),request:async()=>({nccAdgroupId:'grp-boiler',userLock:false}),setGroupLock:async()=>{writes++;return {paused:true};}},'../../../admin/shared':{koreaDate:()=> '2026-09-11',channelOf:()=> 'unknown'}});
+ const req=(body)=>({headers:new Headers({authorization:'Bearer test'}),json:async()=>body});
+ const body={action:'toggle',id:'grp-boiler',paused:false,expectedPaused:true};
+ assert.equal((await api.POST(req(body))).status,403);assert.equal(writes,0);
+ scope=[{nccAdgroupId:'grp-boiler'}];assert.equal((await api.POST(req(body))).status,409);assert.equal(writes,0);
+ assert.equal((await api.POST(req({...body,paused:true,expectedPaused:false}))).status,200);assert.equal(writes,1);
+});
