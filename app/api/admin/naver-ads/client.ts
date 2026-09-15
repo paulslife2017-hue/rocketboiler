@@ -49,6 +49,12 @@ export async function setGroupLock(c:Credentials,group:Record<string,unknown>,pa
   if(updated.userLock!==paused)throw Error('네이버 설정 반영을 아직 확인하지 못했습니다. 새로고침 후 상태를 확인해 주세요.');
   return {id,paused:updated.userLock,status:updated.status,statusReason:updated.statusReason};
 }
+export async function setCampaignLock(c:Credentials,campaign:Record<string,unknown>,paused:boolean){
+  const id=String(campaign.nccCampaignId);if(!/^cmp-[\w-]+$/.test(id))throw Error('네이버 캠페인 ID를 확인해 주세요.');
+  const path='/ncc/campaigns/'+id;await write(c,'PUT',path,{...campaign,userLock:paused},'userLock');const updated=await request(c,path);
+  if(updated.userLock!==paused)throw Error('네이버 설정 반영을 아직 확인하지 못했습니다. 새로고침 후 상태를 확인해 주세요.');
+  return {id,paused:updated.userLock,status:updated.status};
+}
 export async function campaigns(c:Credentials):Promise<Campaign[]>{const data=await request(c,'/ncc/campaigns');if(!Array.isArray(data)||data.some(p=>typeof p.nccCampaignId!=='string'||typeof p.name!=='string'))throw Error('네이버 캠페인 응답을 확인할 수 없습니다.');return data;}
 const rounded=(value:number)=>Math.max(MIN_BID,Math.min(MAX_BID,Math.ceil((Number(value)||MIN_BID)/10)*10));
 export function nextSafeBid(currentValue:number,desiredValue:number){const current=rounded(currentValue),desired=rounded(desiredValue);if(desired>current){const ratio=Math.ceil(current*(1+MAX_RATIO)/10)*10;return Math.min(desired,current+MAX_STEP,ratio,MAX_BID);}if(current>desired*1.15)return Math.max(desired,Math.floor(current*.9/10)*10,MIN_BID);return current;}
