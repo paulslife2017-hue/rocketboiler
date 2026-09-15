@@ -65,6 +65,20 @@ export default function AdminPage() {
   function closeDetail() { if (saving) return; ++photosId.current; dialog.current?.close(); setSelected(null); setPhotoUrls([]); }
   useEffect(() => { if (selected && !dialog.current?.open) dialog.current?.showModal(); }, [selected]);
   useEffect(() => () => photoUrls.forEach((url) => URL.revokeObjectURL(url)), [photoUrls]);
+  useEffect(() => {
+    let entryCode = '';
+    try {
+      entryCode = sessionStorage.getItem('rocket-admin-entry') || '';
+      sessionStorage.removeItem('rocket-admin-entry');
+    } catch {
+      // Keep the regular admin sign-in form when storage is unavailable.
+    }
+    if (!entryCode) return;
+    const timer = window.setTimeout(() => void load(1, entryCode), 0);
+    return () => window.clearTimeout(timer);
+    // The one-time entry code is intentionally read only when this page mounts.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function openLead(lead: Lead) {
     const id = ++photosId.current;

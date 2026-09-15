@@ -1,0 +1,93 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(7, 17, 29, 0.56);
+  backdrop-filter: blur(5px);
+}
+
+.dialog {
+  position: relative;
+  width: min(100%, 360px);
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 22px;
+  background: #111c28;
+  color: #fff;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+.dialog h2 {
+  margin: 14px 0 24px;
+  font-size: 24px;
+}
+
+.mark {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #f15a29;
+  font-weight: 900;
+}
+
+.close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  border: 0;
+  background: transparent;
+  color: #aeb8c3;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.dialog form,
+.dialog label {
+  display: grid;
+  gap: 9px;
+}
+
+.dialog label {
+  color: #c9d1d9;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dialog input {
+  width: 100%;
+  height: 50px;
+  padding: 0 15px;
+  border: 1px solid #3b4b5b;
+  border-radius: 12px;
+  outline: none;
+  background: #0a141f;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 0.14em;
+}
+
+.dialog input:focus {
+  border-color: #f15a29;
+  box-shadow: 0 0 0 3px rgba(241, 90, 41, 0.16);
+}
+
+.dialog form > button {
+  height: 48px;
+  margin-top: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: #f15a29;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.dialog form > button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}

@@ -1,3 +1,5 @@
+import HiddenAdminEntry from "./components/HiddenAdminEntry";
+
 const faqs = [
   ["오늘 연락하면 당일 설치가 가능한가요?", "오전에 접수하시고 제품 재고와 기사 일정이 맞으면 당일 설치가 가능합니다. 주소와 현장 사진을 확인한 뒤 방문 가능한 시간을 알려드립니다."],
   ["새집이나 상가에 신규 설치도 가능한가요?", "네. 신규 설치와 인테리어 후 재설치도 가능합니다. 현장 상황에 따라 연통 연장뿐 아니라 타공 작업이 필요할 수 있어, 배관·연통 위치를 사진이나 현장 방문으로 먼저 확인한 뒤 필요한 작업을 안내드립니다."],
@@ -36,10 +38,7 @@ export default function Home() {
         <div><span>서울·경기 보일러 설치 전문</span><span>상담시간 09:00 - 21:00</span></div>
       </div>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="로켓보일러 홈">
-          <span className="brand-symbol">R</span>
-          <span><b>로켓</b>보일러<small>가정용 보일러 교체·설치</small></span>
-        </a>
+        <HiddenAdminEntry />
         <nav aria-label="주요 메뉴">
           <a href="#service">서비스 안내</a>
           <a href="#price">설치 비용</a>
