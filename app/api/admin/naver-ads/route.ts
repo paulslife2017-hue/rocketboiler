@@ -1,6 +1,6 @@
 import {NextRequest,NextResponse} from 'next/server';
 import {database,initialize} from '../operations/store';
-import {campaigns,optimizeBids,setCampaignLock,setGroupLock,siteGroups,SITE_HOST,decrypt,encrypt,request as adsRequest,statsOf,validPeriod,type Credentials} from './client';
+import {bizmoneyOf,campaigns,optimizeBids,setCampaignLock,setGroupLock,siteGroups,SITE_HOST,decrypt,encrypt,request as adsRequest,statsOf,validPeriod,type Credentials} from './client';
 import {channelOf,koreaDate} from '../../../admin/shared';
 export const runtime='nodejs';
 export const maxDuration=60;
@@ -13,13 +13,13 @@ export async function GET(r:NextRequest){
   const until=r.nextUrl.searchParams.get('until')||koreaDate();const since=r.nextUrl.searchParams.get('since')||koreaDate(new Date(Date.now()-6*86400000));
   if(!validPeriod(since,until)||until>koreaDate())return NextResponse.json({error:'오늘까지 최대 31일 범위로 선택해 주세요.'},{status:400});
   try{await initialize();const sql=database();const c=await credentials(sql);if(!c)return NextResponse.json({connected:false},{headers:{'Cache-Control':'private, no-store'}});
-    const scope=await siteGroups(c);const list=scope.groups;const parentIds=new Set(list.map(group=>group.nccCampaignId));const parentCampaigns=(await campaigns(c)).filter(campaign=>parentIds.has(campaign.nccCampaignId)).map(campaign=>({id:campaign.nccCampaignId,name:campaign.name,status:campaign.status,paused:campaign.userLock}));
+    const [scope,bizmoneyRaw]=await Promise.all([siteGroups(c),adsRequest(c,'/billing/bizmoney')]);const bizmoney=bizmoneyOf(bizmoneyRaw);const list=scope.groups;const parentIds=new Set(list.map(group=>group.nccCampaignId));const parentCampaigns=(await campaigns(c)).filter(campaign=>parentIds.has(campaign.nccCampaignId)).map(campaign=>({id:campaign.nccCampaignId,name:campaign.name,status:campaign.status,paused:campaign.userLock}));
     const results=[];const start=Date.now();
     for(let i=0;i<list.length;i+=4){if(Date.now()-start>35000)throw Error('네이버 조회 시간이 초과됐습니다. 다시 조회해 주세요.');const batch=await Promise.all(list.slice(i,i+4).map(async campaign=>{const params=new URLSearchParams({id:campaign.nccAdgroupId,fields:JSON.stringify(['impCnt','clkCnt','salesAmt']),timeRange:JSON.stringify({since,until}),timeIncrement:'allDays'});const stats=statsOf(await adsRequest(c,'/stats',params));return {id:campaign.nccAdgroupId,campaignId:campaign.nccCampaignId,name:campaign.name,status:campaign.status,paused:campaign.userLock,statusReason:campaign.statusReason,type:'AD_GROUP',...stats};}));results.push(...batch);}
     const totals=results.reduce((a,b)=>({impCnt:a.impCnt+b.impCnt,clkCnt:a.clkCnt+b.clkCnt,salesAmt:a.salesAmt+b.salesAmt}),{impCnt:0,clkCnt:0,salesAmt:0});
     const sources=await sql`SELECT source,status,COUNT(*)::int AS count FROM boiler_leads WHERE status!='sample' AND created_at>=${since+'T00:00:00+09:00'}::timestamptz AND created_at<${until+'T00:00:00+09:00'}::timestamptz+INTERVAL '1 day' GROUP BY source,status`;
     const leads={naver:0,google:0,unknown:0,naverCompleted:0};for(const row of sources){const ch=channelOf(row.source||'');leads[ch as 'naver'|'google'|'unknown']+=Number(row.count);if(ch==='naver'&&row.status==='completed')leads.naverCompleted+=Number(row.count);}
-    return NextResponse.json({connected:true,customerId:c.customerId,siteHost:SITE_HOST,excludedMixed:scope.mixed,channelReasons:scope.channelReasons,since,until,parentCampaigns,campaigns:results,totals,leads,updatedAt:new Date().toISOString()},{headers:{'Cache-Control':'private, no-store'}});
+    return NextResponse.json({connected:true,customerId:c.customerId,siteHost:SITE_HOST,excludedMixed:scope.mixed,channelReasons:scope.channelReasons,since,until,bizmoney,parentCampaigns,campaigns:results,totals,leads,updatedAt:new Date().toISOString()},{headers:{'Cache-Control':'private, no-store'}});
   }catch(e){return failure(e);}
 }
 export async function POST(r:NextRequest){

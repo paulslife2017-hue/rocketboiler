@@ -235,6 +235,9 @@
 .adMasterCopy>p { margin-top:9px; color:var(--muted); font-size:14px; line-height:1.6; }
 .adMeta { display:flex; flex-wrap:wrap; gap:9px 18px; margin-top:18px; color:var(--muted); font-size:13px; }
 .adMeta b { color:var(--ink); }
+.adBalance { padding:5px 9px; border-radius:7px; background:#f0a93a14; color:#e7b766; }
+.adBalance b { color:var(--gold); }
+.adBalance em { margin-left:7px; color:#f68b90; font-size:11px; font-style:normal; font-weight:800; }
 .adSwitchArea { display:grid; justify-items:center; gap:7px; min-width:112px; }
 .adSwitchArea>span { color:var(--muted); font-size:12px; }
 .adSwitchArea>strong { font-size:13px; }

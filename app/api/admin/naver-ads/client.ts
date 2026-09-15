@@ -2,6 +2,7 @@ import {createHmac,createHash,randomBytes,createCipheriv,createDecipheriv} from 
 export type Credentials={customerId:string;apiKey:string;secretKey:string};
 export type Campaign={nccCampaignId:string;name:string;status:string;userLock:boolean;campaignTp:string};
 export type Stats={impCnt:number;clkCnt:number;salesAmt:number};
+export type Bizmoney={balance:number;budgetLocked:boolean;refundLocked:boolean};
 export const SITE_HOST='rocketboiler.vercel.app';
 export function isSiteUrl(value:unknown){if(typeof value!=='string'||!value)return false;try{const url=new URL(value);return ['https:','http:'].includes(url.protocol)&&url.hostname===SITE_HOST&&!url.username&&!url.password;}catch{return false;}}
 type Channel={nccBusinessChannelId:string;channelKey:string;statusReason?:string;businessInfo?:{site?:string}};
@@ -69,5 +70,11 @@ export async function optimizeBids(c:Credentials,groups:Group[],dryRun=true){
 export function statsOf(data:unknown):Stats{
   if(!data||typeof data!=='object'||!('data' in data)||!Array.isArray(data.data))throw Error('네이버 통계 응답을 확인할 수 없습니다.');
   return data.data.reduce((total:Stats,row:Record<string,unknown>)=>{for(const field of ['impCnt','clkCnt','salesAmt'] as const){if(typeof row[field]!=='number'||!Number.isFinite(row[field])||row[field]<0)throw Error('네이버 통계 항목이 누락되었습니다.');total[field]+=row[field];}return total;},{impCnt:0,clkCnt:0,salesAmt:0});
+}
+export function bizmoneyOf(data:unknown):Bizmoney{
+  if(!data||typeof data!=='object')throw Error('네이버 비즈머니 응답을 확인할 수 없습니다.');
+  const row=data as Record<string,unknown>,balance=Number(row.bizmoney);
+  if(!Number.isFinite(balance)||balance<0||typeof row.budgetLock!=='boolean'||typeof row.refundLock!=='boolean')throw Error('네이버 비즈머니 잔액을 확인할 수 없습니다.');
+  return {balance,budgetLocked:row.budgetLock,refundLocked:row.refundLock};
 }
 export function validPeriod(since:string,until:string){const valid=(s:string)=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s))&&new Date(s).toISOString().slice(0,10)===s;return valid(since)&&valid(until)&&since<=until&&(Date.parse(until)-Date.parse(since))/86400000<31;}
