@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import styles from "./HiddenAdminEntry.module.css";
 
 const CLICK_WINDOW_MS = 750;
+const REQUIRED_CLICKS = 2;
 
 export default function HiddenAdminEntry() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function HiddenAdminEntry() {
     const now = Date.now();
     clicks.current = [...clicks.current.filter((time) => now - time <= CLICK_WINDOW_MS), now];
 
-    if (clicks.current.length < 3) return;
+    if (clicks.current.length < REQUIRED_CLICKS) return;
 
     event.preventDefault();
     clicks.current = [];
@@ -47,7 +48,7 @@ export default function HiddenAdminEntry() {
 
   return (
     <>
-      <a className="brand" href="#top" aria-label="로켓보일러 홈" onClick={handleBrandClick}>
+      <a className={`brand ${styles.trigger}`} href="#top" aria-label="로켓보일러 홈" onClick={handleBrandClick}>
         <span className="brand-symbol">R</span>
         <span><b>로켓</b>보일러<small>가정용 보일러 교체·설치</small></span>
       </a>

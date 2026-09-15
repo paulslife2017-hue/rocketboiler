@@ -1,3 +1,8 @@
+.trigger {
+  touch-action: manipulation;
+  user-select: none;
+}
+
 .backdrop {
   position: fixed;
   inset: 0;
