@@ -1,5 +1,8 @@
 import HiddenAdminEntry from "./components/HiddenAdminEntry";
 
+const phoneDisplay = "010-5858-9975";
+const phoneHref = "tel:01058589975";
+
 const faqs = [
   ["오늘 연락하면 당일 설치가 가능한가요?", "오전에 접수하시고 제품 재고와 기사 일정이 맞으면 당일 설치가 가능합니다. 주소와 현장 사진을 확인한 뒤 방문 가능한 시간을 알려드립니다."],
   ["새집이나 상가에 신규 설치도 가능한가요?", "네. 신규 설치와 인테리어 후 재설치도 가능합니다. 현장 상황에 따라 연통 연장뿐 아니라 타공 작업이 필요할 수 있어, 배관·연통 위치를 사진이나 현장 방문으로 먼저 확인한 뒤 필요한 작업을 안내드립니다."],
@@ -35,7 +38,7 @@ export default function Home() {
   return (
     <main id="top">
       <div className="top-notice">
-        <div><span>서울·경기 보일러 설치 전문</span><span>상담시간 09:00 - 21:00</span></div>
+        <div><span>서울·경기 보일러 설치 전문</span><a href={phoneHref}>전화상담 {phoneDisplay}</a></div>
       </div>
       <header className="site-header">
         <HiddenAdminEntry />
@@ -45,7 +48,7 @@ export default function Home() {
           <a href="#area">출장 지역</a>
           <a href="#faq">자주 묻는 질문</a>
         </nav>
-        <a className="header-button" href="#contact">상담 문의</a>
+        <a className="header-button" href={phoneHref}>전화 상담</a>
       </header>
 
       <section className="hero">
@@ -54,8 +57,8 @@ export default function Home() {
           <h1>보일러 설치가 필요할 때<br /><strong>오늘 바로 확인합니다.</strong></h1>
           <p className="lead">신규 설치부터 노후 보일러 교체까지 가능합니다. 현장 사진을 보내주시면 설치비와 방문 일정을 먼저 안내합니다.</p>
           <div className="hero-buttons">
-            <a className="primary-button" href="#contact">사진으로 견적 받기</a>
-            <a className="secondary-button" href="#price">설치비 먼저 보기</a>
+            <a className="primary-button" href={phoneHref}>전화로 바로 상담</a>
+            <a className="secondary-button" href="#consultation" data-consultation-trigger>문의 남기기</a>
           </div>
           <p className="hero-note">※ 오전 상담 시 당일 설치 일정을 우선 확인해 드립니다.</p>
         </div>
@@ -152,9 +155,18 @@ export default function Home() {
           <p>신규 현장은 설치 공간과 배관·연통 위치, 교체 현장은 제품 전체와 모델명 사진을 준비해 주세요.</p>
         </div>
         <div className="contact-box">
-          <p><b>사진 상담 안내</b><br />설치 주소와 연락 가능한 시간도 함께 적어주시면 확인이 빠릅니다.</p>
+          <p><b>편한 방법으로 상담하세요.</b><br />전화로 바로 문의하거나 현장 정보와 사진을 남겨주시면 확인 후 연락드립니다.</p>
+          <div className="contact-actions">
+            <a className="contact-call" href={phoneHref}><small>전화 상담</small><b>{phoneDisplay}</b></a>
+            <a className="contact-request" href="#consultation" data-consultation-trigger><small>사진·정보 접수</small><b>문의 남기기 →</b></a>
+          </div>
         </div>
       </section>
+
+      <div className="mobile-contact" aria-label="빠른 상담">
+        <a href={phoneHref}><span>전화</span><b>{phoneDisplay}</b></a>
+        <a href="#consultation" data-consultation-trigger><span>온라인</span><b>문의 남기기</b></a>
+      </div>
 
       <footer>
         <div className="footer-brand"><b>로켓보일러</b><span>서울·경기 가정용 보일러 교체·설치</span></div>
@@ -164,6 +176,7 @@ export default function Home() {
           <dl>
             <div><dt>상호</dt><dd>보일러 마스터</dd></div>
             <div><dt>대표자</dt><dd>김명진</dd></div>
+            <div><dt>전화</dt><dd><a href={phoneHref}>{phoneDisplay}</a></dd></div>
             <div><dt>사업자등록번호</dt><dd>114-25-71582</dd></div>
             <div className="footer-business-address"><dt>사업장 주소</dt><dd>서울특별시 금천구 시흥대로 97, 26동 2층 202호 (시흥동, 시흥유통상가)</dd></div>
           </dl>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./contact-actions.css";
 import ConsultationWidget from "./components/ConsultationWidget";
 
 const siteUrl = "https://rocketboiler.vercel.app";
@@ -37,6 +38,7 @@ const localBusiness = {
   name: "로켓보일러",
   url: siteUrl,
   description: "서울·경기·인천 가스보일러 교체 비용·설치 가격 사진 견적 전문",
+  telephone: "+82-10-5858-9975",
   areaServed: ["서울특별시", "군포시", "안양시", "과천시", "광명시", "부천시", "고양시", "구리시", "하남시", "성남시", "인천광역시"],
   image: `${siteUrl}/og.png`,
   brand: ["경동나비엔", "귀뚜라미", "린나이"],

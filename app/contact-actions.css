@@ -1,0 +1,105 @@
+.top-notice a {
+  color: inherit;
+  font-weight: 700;
+}
+
+.contact-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.contact-actions a {
+  display: grid;
+  gap: 5px;
+  min-height: 74px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.contact-actions small {
+  font-size: 11px;
+  opacity: .76;
+}
+
+.contact-actions b {
+  font-size: 16px;
+}
+
+.contact-call {
+  background: #ef6b3b;
+  color: #fff;
+}
+
+.contact-request {
+  background: #fff;
+  color: #142e4a !important;
+}
+
+.mobile-contact {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .contact-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-contact {
+    position: fixed;
+    z-index: 79;
+    left: 10px;
+    right: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid rgba(18, 61, 50, .12);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 12px 34px rgba(13, 29, 25, .2);
+    backdrop-filter: blur(12px);
+  }
+
+  .mobile-contact a {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .mobile-contact a:first-child {
+    background: #ef6b3b;
+    color: #fff;
+  }
+
+  .mobile-contact a:last-child {
+    background: #123d32;
+    color: #fff;
+  }
+
+  .mobile-contact span {
+    display: block;
+    font-size: 10px;
+    opacity: .75;
+  }
+
+  .mobile-contact b {
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  [aria-label="보일러 설치 예약 열기"] {
+    bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+  }
+}
