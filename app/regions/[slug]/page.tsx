@@ -29,9 +29,6 @@ export default async function RegionPage({params}:{params:Promise<{slug:string}>
     <section className={styles.hero}><p className={styles.eyebrow}>{region} 보일러 설치 전문</p><h1>{areaKeyword} 보일러 교체·설치 비용,<br/><em>전화로 바로 상담하세요</em></h1><p className={styles.lead}>경동나비엔·귀뚜라미·린나이 가스보일러 교체부터 신규 설치까지. 현장 조건과 예상 추가 비용을 설치 전에 안내합니다.</p><div className={styles.actions}><a href="tel:01058589975" className={styles.primary}>전화로 바로 상담</a><a href="#cost" className={styles.secondary}>비용 기준 보기</a></div></section>
     <section className={styles.localStrip}><strong>방문 상담 지역</strong><span>{area.neighborhoods.join(" · ")} 및 {area.name} 전 지역</span></section>
     <section className={styles.section} id="cost"><p className={styles.kicker}>견적에서 확인할 항목</p><h2>제품 가격만큼 중요한<br/>현장 설치 조건</h2><div className={styles.grid}><article><b>01</b><h3>보일러 교체 비용</h3><p>기존 모델, 난방 평수, 용량과 배관 상태를 함께 확인해 알맞은 제품과 설치 범위를 안내합니다.</p></article><article><b>02</b><h3>연통·배수구 조건</h3><p>신규 설치나 위치 변경은 연통 연장과 타공이 필요할 수 있으며, 콘덴싱 보일러는 배수구 위치를 확인합니다.</p></article><article><b>03</b><h3>각방제어·통신선</h3><p>각방제어기와 실내조절기 사진을 확인해 작업 시간과 추가 자재 가능성을 미리 설명합니다.</p></article></div></section>
-    <section className={styles.keywordBand}><p>{area.name} 보일러 교체 관련 안내</p><SeoKeywordLinks areaSlug={area.slug} areaName={area.name} neighborhoods={area.neighborhoods}/></section>
-    <section className={styles.section}><p className={styles.kicker}>동네별 사진 견적</p><h2>{area.neighborhoods.join("·")}<br/>보일러 교체 안내</h2><div className={styles.grid}>{area.neighborhoods.map((n,index)=><article key={n}><b>{String(index+1).padStart(2,"0")}</b><h3><Link href={`/regions/${area.slug}/${n}`}>{n} 보일러 교체·설치</Link></h3><p>{n} 아파트·빌라·주택의 기존 보일러 모델, 난방 평수, 연통과 배수구 사진을 확인해 귀뚜라미·경동나비엔·린나이 제품과 예상 설치 범위를 안내합니다.</p></article>)}</div></section>
-    <section className={styles.areaGroup}><div><span>{area.name} 브랜드별 안내</span><strong>3개 브랜드</strong></div><div className={styles.areaLinks}>{[{slug:"kiturami",name:"귀뚜라미"},{slug:"kyungdong-navien",name:"경동나비엔"},{slug:"rinnai",name:"린나이"}].map(brand=><Link href={`/regions/${area.slug}/brands/${brand.slug}`} key={brand.slug}><b>{area.name} {brand.name} 보일러</b><small>교체 가격·콘덴싱 설치</small></Link>)}</div></section>
     <section className={`${styles.section} ${styles.fieldStory}`}>
       <div className={styles.fieldIntro}>
         <p className={styles.kicker}>실제 작업 현장</p>
@@ -44,9 +41,7 @@ export default async function RegionPage({params}:{params:Promise<{slug:string}>
         </ul>
         <div className={styles.fieldActions}>
           <a href="tel:01058589975" className={styles.primary}>010-5858-9975 전화 상담</a>
-          <a href="#consultation" data-consultation-trigger className={styles.secondary}>사진으로 문의 남기기</a>
         </div>
-        <a className={styles.photoSource} href="https://map.naver.com/p/entry/place/2092135363" target="_blank" rel="noopener noreferrer">네이버 플레이스에서 업체 정보 확인 ↗</a>
       </div>
       <div className={styles.photoGrid}>
         <figure><Image src="/field-photos/naver-1.jpg" alt="보일러 설치 공간과 연통 배치 확인 현장" width={955} height={1280}/><figcaption><b>설치 공간 확인</b><span>보일러 위치와 연통·배기 조건을 함께 봅니다.</span></figcaption></figure>
@@ -55,6 +50,9 @@ export default async function RegionPage({params}:{params:Promise<{slug:string}>
     </section>
     <section className={styles.section}><p className={styles.kicker}>자주 묻는 질문</p><h2>{area.name} 설치 전<br/>꼭 확인해 주세요</h2><div className={styles.faq}>{faq.map(x=><details key={x.q}><summary>{x.q}</summary><p>{x.a}</p></details>)}</div></section>
     <section className={styles.cta}><p>{region} 보일러 교체를 준비 중이신가요?</p><h2>현장 조건과 설치 비용을<br/>전화로 바로 확인하세요.</h2><a href="tel:01058589975">010-5858-9975 전화 상담</a></section>
+    <section className={styles.keywordBand}><p>{area.name} 보일러 교체 관련 안내</p><SeoKeywordLinks areaSlug={area.slug} areaName={area.name} neighborhoods={area.neighborhoods}/></section>
+    <section className={styles.section}><p className={styles.kicker}>동네별 사진 견적</p><h2>{area.neighborhoods.join("·")}<br/>보일러 교체 안내</h2><div className={styles.grid}>{area.neighborhoods.map((n,index)=><article key={n}><b>{String(index+1).padStart(2,"0")}</b><h3><Link href={`/regions/${area.slug}/${n}`}>{n} 보일러 교체·설치</Link></h3><p>{n} 아파트·빌라·주택의 기존 보일러 모델, 난방 평수, 연통과 배수구 사진을 확인해 귀뚜라미·경동나비엔·린나이 제품과 예상 설치 범위를 안내합니다.</p></article>)}</div></section>
+    <section className={styles.areaGroup}><div><span>{area.name} 브랜드별 안내</span><strong>3개 브랜드</strong></div><div className={styles.areaLinks}>{[{slug:"kiturami",name:"귀뚜라미"},{slug:"kyungdong-navien",name:"경동나비엔"},{slug:"rinnai",name:"린나이"}].map(brand=><Link href={`/regions/${area.slug}/brands/${brand.slug}`} key={brand.slug}><b>{area.name} {brand.name} 보일러</b><small>교체 가격·콘덴싱 설치</small></Link>)}</div></section>
     <footer className={styles.footer}><Link href="/regions">전체 설치 지역</Link><Link href="/brands">브랜드별 보일러</Link><Link href="/guides">교체·가격 안내</Link><span>로켓보일러</span></footer>
     <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(faqSchema)}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(breadcrumbSchema)}}/>
   </main>;
