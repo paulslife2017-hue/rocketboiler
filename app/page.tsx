@@ -54,8 +54,8 @@ export default function Home() {
       <section className="hero">
         <div className="hero-copy">
           <p className="location-label">신규 설치 · 교체 설치 · 이전 설치</p>
-          <h1>보일러 설치가 필요할 때<br /><strong>오늘 바로 확인합니다.</strong></h1>
-          <p className="lead">신규 설치부터 노후 보일러 교체까지 가능합니다. 현장 사진을 보내주시면 설치비와 방문 일정을 먼저 안내합니다.</p>
+          <h1>보일러 교체·설치 비용,<br /><strong>전화로 바로 확인하세요.</strong></h1>
+          <p className="lead">서울·경기·인천 신규 설치부터 노후 보일러 교체까지 가능합니다. 전화로 지역과 기존 보일러 상태를 알려주시면 예상 설치비와 방문 가능 시간을 안내합니다.</p>
           <div className="hero-buttons">
             <a className="primary-button" href={phoneHref}>전화로 바로 상담</a>
             <a className="secondary-button" href="#consultation" data-consultation-trigger>문의 남기기</a>
@@ -129,7 +129,8 @@ export default function Home() {
           <p>지역과 접수 시간, 기사 배정 상황에 따라 당일 방문 여부가 달라질 수 있습니다.</p>
         </div>
         <div className="area-list">
-          {areas.map(([name, href]) => <a href={href} key={name}><span className="pin">●</span><b>{name} 보일러 설치</b><em>지역 안내 →</em></a>)}
+          {areas.map(([name, href]) => <a href={href} key={name}><span className="pin">●</span><b>{name} 보일러 교체·설치 비용</b><em>지역 안내 →</em></a>)}
+          <a href="/regions"><span className="pin">●</span><b>서울·인천 전체 설치 지역</b><em>지역 안내 →</em></a>
           <p>목록에 없는 지역도 상담 시 주소를 알려주시면 확인해 드립니다.</p>
         </div>
       </section>

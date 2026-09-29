@@ -13,6 +13,6 @@ export default function BrandsPage(){return <main className={styles.shell}>
   <nav className={styles.nav}><Link href="/" className={styles.brand}>ROCKET BOILER</Link><Link href="/regions" className={styles.navLink}>설치 지역</Link></nav>
   <section className={styles.hubHero}><p className={styles.eyebrow}>BOILER BRAND GUIDE</p><h1>우리 집에 맞는<br/><em>보일러 브랜드 비교</em></h1><p>브랜드 이름만 보고 고르기보다 난방 평수, 욕실 수, 온수 사용량과 기존 설치 조건을 함께 확인하세요.</p></section>
   <section className={styles.areaGroup}><div><span>취급 브랜드</span><strong>3개 브랜드</strong></div><div className={styles.areaLinks}>{boilerBrands.map(brand=><Link href={`/brands/${brand.slug}`} key={brand.slug}><b>{brand.name} 보일러</b><small>교체 가격·콘덴싱 비교</small></Link>)}</div></section>
-  <section className={styles.cta}><p>브랜드 선택이 어려우신가요?</p><h2>기존 보일러 사진으로<br/>호환 조건부터 확인하세요.</h2><Link href="/">설치 예약 시작</Link></section>
+  <section className={styles.cta}><p>브랜드 선택이 어려우신가요?</p><h2>기존 보일러 사진으로<br/>호환 조건부터 확인하세요.</h2><a href="tel:01058589975">010-5858-9975 전화 상담</a></section>
 </main>}
 
