@@ -23,5 +23,5 @@ export default function SeoKeywordLinks({ areaSlug, areaName, neighborhoods = []
     ...brands.map(([name, slug]) => [`${areaName} ${name} 보일러 가격`, `/regions/${areaSlug}/brands/${slug}`] as const),
   ] : [];
   const links = [...localLinks, ...guideLinks.filter(([, href]) => !currentGuideSlug || href !== `/guides/${currentGuideSlug}`)];
-  return <div>{links.map(([label, href]) => <Link href={href} key={`${href}-${label}`}>{label}<small>안내 보기</small></Link>)}</div>;
+  return <div>{links.map(([label, href]) => <Link href={href} key={`${href}-${label}`}><span>{label}</span><small aria-hidden="true">→</small></Link>)}</div>;
 }

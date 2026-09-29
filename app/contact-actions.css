@@ -5,7 +5,7 @@
 
 .contact-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px;
   margin-top: 22px;
 }
@@ -57,7 +57,7 @@
     right: 10px;
     bottom: max(10px, env(safe-area-inset-bottom));
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 8px;
     padding: 8px;
     border: 1px solid rgba(18, 61, 50, .12);
@@ -100,6 +100,6 @@
   }
 
   #consultation {
-    bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+    bottom: max(14px, env(safe-area-inset-bottom)) !important;
   }
 }

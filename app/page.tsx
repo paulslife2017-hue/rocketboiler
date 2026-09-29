@@ -58,7 +58,6 @@ export default function Home() {
           <p className="lead">서울·경기·인천 신규 설치부터 노후 보일러 교체까지 가능합니다. 전화로 지역과 기존 보일러 상태를 알려주시면 예상 설치비와 방문 가능 시간을 안내합니다.</p>
           <div className="hero-buttons">
             <a className="primary-button" href={phoneHref}>전화로 바로 상담</a>
-            <a className="secondary-button" href="#consultation" data-consultation-trigger>문의 남기기</a>
           </div>
           <p className="hero-note">※ 오전 상담 시 당일 설치 일정을 우선 확인해 드립니다.</p>
         </div>
@@ -152,22 +151,16 @@ export default function Home() {
       <section className="contact" id="contact">
         <div>
           <span>보일러 설치 상담</span>
-          <h2>설치할 자리나 현재 보일러를 찍어주세요.</h2>
-          <p>신규 현장은 설치 공간과 배관·연통 위치, 교체 현장은 제품 전체와 모델명 사진을 준비해 주세요.</p>
+          <h2>설치 비용과 방문 일정을 전화로 확인하세요.</h2>
+          <p>설치 지역과 기존 보일러 상태를 알려주세요. 현장 확인이 필요한 경우 상담 중 필요한 사진을 안내해 드립니다.</p>
         </div>
         <div className="contact-box">
-          <p><b>편한 방법으로 상담하세요.</b><br />전화로 바로 문의하거나 현장 정보와 사진을 남겨주시면 확인 후 연락드립니다.</p>
+          <p><b>로켓보일러에 바로 전화하세요.</b><br />예상 설치비와 방문 가능한 일정을 안내해 드립니다.</p>
           <div className="contact-actions">
             <a className="contact-call" href={phoneHref}><small>전화 상담</small><b>{phoneDisplay}</b></a>
-            <a className="contact-request" href="#consultation" data-consultation-trigger><small>사진·정보 접수</small><b>문의 남기기 →</b></a>
           </div>
         </div>
       </section>
-
-      <div className="mobile-contact" aria-label="빠른 상담">
-        <a href={phoneHref}><span>전화</span><b>{phoneDisplay}</b></a>
-        <a href="#consultation" data-consultation-trigger><span>온라인</span><b>문의 남기기</b></a>
-      </div>
 
       <footer>
         <div className="footer-brand"><b>로켓보일러</b><span>서울·경기 가정용 보일러 교체·설치</span></div>

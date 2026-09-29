@@ -19,3 +19,13 @@
 .brand{letter-spacing:.025em}.photoGrid figcaption b{font-weight:700}.photoGrid figcaption span{font-size:14px;line-height:1.7}
 .footer{flex-wrap:wrap;gap:16px 28px;max-width:none}
 @media(max-width:600px){.hero h1,.hubHero h1{font-size:clamp(32px,8.7vw,42px);line-height:1.28;letter-spacing:-.035em}.section h2,.cta h2,.fieldIntro h2{font-size:clamp(27px,7.5vw,34px);line-height:1.35}.section h2{margin-bottom:28px}.grid article{padding:26px}.grid p,.faq p,.fieldLead{font-size:15px}.lead{font-size:17px}.trustList li{gap:10px}.localStrip{gap:8px}.primary,.secondary,.cta a{font-size:15px}.fieldActions a{padding-inline:14px}}
+
+/* Related articles use clear individual cards, including on narrow screens. */
+.keywordBand>p{margin:0;font-size:22px;font-weight:700;line-height:1.5;letter-spacing:-.025em}
+.keywordBand>div{gap:12px;margin-top:24px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.keywordBand a{min-height:76px;padding:20px 22px;border-radius:12px;background:#fff;font-size:16px;font-weight:600;line-height:1.6;transition:background .15s,border-color .15s}
+.keywordBand a>span{min-width:0;word-break:keep-all;overflow-wrap:anywhere}
+.keywordBand small{font-size:22px;color:var(--pine);font-weight:400}
+.keywordBand a:focus-visible,.primary:focus-visible,.secondary:focus-visible,.cta a:focus-visible{outline:3px solid var(--orange);outline-offset:4px}
+.nav{display:flex;margin-left:0;gap:16px}.nav .brand{font-size:15px}.navLink{flex-shrink:0}
+@media(max-width:600px){.keywordBand{padding:40px 22px}.keywordBand>p{font-size:20px}.keywordBand>div{grid-template-columns:1fr;gap:10px;margin-top:20px}.keywordBand a{min-height:66px;padding:16px 18px;font-size:15px}.footer{padding-bottom:110px}}
