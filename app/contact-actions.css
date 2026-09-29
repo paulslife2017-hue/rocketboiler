@@ -99,7 +99,7 @@
     white-space: nowrap;
   }
 
-  [aria-label="보일러 설치 예약 열기"] {
+  #consultation {
     bottom: calc(88px + env(safe-area-inset-bottom)) !important;
   }
 }
