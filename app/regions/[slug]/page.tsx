@@ -8,7 +8,7 @@ const siteUrl = "https://rocketboiler.vercel.app";
 export function generateStaticParams(){ return serviceAreas.map(({slug})=>({slug})); }
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{
   const area=getServiceArea((await params).slug); if(!area)return{}; const areaKeyword=area.province==="경기"?area.name.replace(/시$/,""):area.name; const region=`${area.province} ${areaKeyword}`;
-  const title=`${region} 보일러 교체비용·설치비용`,description=`${region} 가스보일러 교체비용·설치비용을 전화로 상담하세요. 경동나비엔·귀뚜라미·린나이 보일러와 현장별 추가 비용을 미리 안내합니다.`;
+  const title=`${region} 보일러 교체·설치 비용`,description=`${area.province} ${area.name} ${area.neighborhoods.join("·")} 보일러 교체·신규 설치 상담. 경동나비엔·귀뚜라미·린나이 제품과 연통·배수구 등 현장별 추가 비용을 전화로 확인하세요.`;
   const localKeywords=area.neighborhoods.flatMap(n=>[`${n} 보일러 교체`,`${n} 보일러 설치`,`${n} 보일러 가격`]);
   return{title,description,keywords:[`${region} 보일러`,`${region} 보일러 교체`,`${region} 보일러 설치`,`${region} 보일러 교체 비용`,`${region} 보일러 가격`,`${region} 가스보일러`,`${area.name} 경동나비엔 보일러`,`${area.name} 귀뚜라미 보일러`,`${area.name} 린나이 보일러`,...localKeywords],alternates:{canonical:`/regions/${area.slug}`},openGraph:{title:`${title} | 로켓보일러`,description,url:`/regions/${area.slug}`,images:["/og.png"]}};
 }
@@ -21,6 +21,7 @@ export default async function RegionPage({params}:{params:Promise<{slug:string}>
     {q:"설치 시간은 얼마나 걸리나요?",a:"일반 교체는 평균 1시간 30분에서 2시간 정도이며, 각방제어 추가 시 최대 3시간, 통신선 정리가 필요하면 4시간가량 걸릴 수 있습니다."}
   ];
   const schema={"@context":"https://schema.org","@type":"Service",name:`${region} 보일러 교체·설치`,serviceType:"가정용 가스보일러 교체 및 신규 설치",provider:{"@type":"HVACBusiness",name:"로켓보일러",url:siteUrl,brand:["경동나비엔","귀뚜라미","린나이"]},areaServed:{"@type":"AdministrativeArea",name:region},url:`${siteUrl}/regions/${area.slug}`};
+  const breadcrumbSchema={"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:[{"@type":"ListItem",position:1,name:"로켓보일러",item:siteUrl},{"@type":"ListItem",position:2,name:"설치 지역",item:`${siteUrl}/regions`},{"@type":"ListItem",position:3,name:`${region} 보일러 교체·설치`,item:`${siteUrl}/regions/${area.slug}`}]};
   const faqSchema={"@context":"https://schema.org","@type":"FAQPage",mainEntity:faq.map(x=>({"@type":"Question",name:x.q,acceptedAnswer:{"@type":"Answer",text:x.a}}))};
   return <main className={styles.shell}>
     <nav className={styles.nav}><Link href="/" className={styles.brand}>ROCKET BOILER</Link><Link href="/regions" className={styles.navLink}>전체 설치 지역</Link></nav>
@@ -34,7 +35,7 @@ export default async function RegionPage({params}:{params:Promise<{slug:string}>
     <section className={styles.section}><p className={styles.kicker}>자주 묻는 질문</p><h2>{area.name} 설치 전<br/>꼭 확인해 주세요</h2><div className={styles.faq}>{faq.map(x=><details key={x.q}><summary>{x.q}</summary><p>{x.a}</p></details>)}</div></section>
     <section className={styles.cta}><p>{region} 보일러 교체를 준비 중이신가요?</p><h2>현장 조건과 설치 비용을<br/>전화로 바로 확인하세요.</h2><a href="tel:01058589975">010-5858-9975 전화 상담</a></section>
     <footer className={styles.footer}><Link href="/regions">전체 설치 지역</Link><Link href="/brands">브랜드별 보일러</Link><Link href="/guides">교체·가격 안내</Link><span>로켓보일러</span></footer>
-    <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(faqSchema)}}/>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(faqSchema)}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(breadcrumbSchema)}}/>
   </main>;
 }
 
