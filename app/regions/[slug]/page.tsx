@@ -8,13 +8,13 @@ import styles from "../regions.module.css";
 const siteUrl = "https://rocketboiler.vercel.app";
 export function generateStaticParams(){ return serviceAreas.map(({slug})=>({slug})); }
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{
-  const area=getServiceArea((await params).slug); if(!area)return{}; const areaKeyword=area.province==="경기"?area.name.replace(/시$/,""):area.name; const region=`${area.province} ${areaKeyword}`;
-  const title=`${area.province==="경기"?areaKeyword:region} 보일러 교체비용·설치비용`,description=`${area.province} ${area.name} 보일러 교체비용은 일반형 원룸 기준 60만원대부터. 경동나비엔·귀뚜라미·린나이 가격과 연통·배관·배수구에 따른 추가 작업 기준을 확인하세요.`;
+  const area=getServiceArea((await params).slug); if(!area)return{}; const areaKeyword=area.name.replace(/(시|구)$/,""); const region=`${area.province} ${area.name}`;
+  const title=`${area.province==="경기"?areaKeyword:region} 보일러 교체비용·설치비용`,description=`${areaKeyword} 가스보일러 교체·설치 상담. 귀뚜라미 일반형 원룸·기본 설치 기준 60만원대부터. 경동나비엔·린나이 비교와 연통·배관·배수구 추가 작업 기준을 확인하세요.`;
   const localKeywords=area.neighborhoods.flatMap(n=>[`${n} 보일러 교체`,`${n} 보일러 설치`,`${n} 보일러 가격`]);
-  return{title,description,keywords:[`${region} 보일러`,`${region} 보일러 교체`,`${region} 보일러 설치`,`${region} 보일러 교체 비용`,`${region} 보일러 가격`,`${region} 가스보일러`,`${area.name} 경동나비엔 보일러`,`${area.name} 귀뚜라미 보일러`,`${area.name} 린나이 보일러`,...localKeywords],alternates:{canonical:`/regions/${area.slug}`},openGraph:{title:`${title} | 로켓보일러`,description,url:`/regions/${area.slug}`,images:["/og.png"]}};
+  return{title,description,keywords:[`${areaKeyword} 보일러 교체`,`${areaKeyword} 보일러 교체비용`,`${areaKeyword} 보일러 설치`,`${areaKeyword} 가스보일러 교체`,`${region} 보일러 교체`,`${area.name} 경동나비엔 보일러`,`${area.name} 귀뚜라미 보일러`,`${area.name} 린나이 보일러`,...localKeywords],alternates:{canonical:`/regions/${area.slug}`},openGraph:{title:`${title} | 로켓보일러`,description,url:`/regions/${area.slug}`,images:["/og.png"]}};
 }
 export default async function RegionPage({params}:{params:Promise<{slug:string}>}){
-  const area=getServiceArea((await params).slug); if(!area)notFound(); const areaKeyword=area.province==="경기"?area.name.replace(/시$/,""):area.name; const region=`${area.province} ${areaKeyword}`;
+  const area=getServiceArea((await params).slug); if(!area)notFound(); const areaKeyword=area.name.replace(/(시|구)$/,""); const region=`${area.province} ${area.name}`;
   const faq=[
     {q:`${area.name} 보일러 교체 비용은 어떻게 확인하나요?`,a:"보일러 모델과 용량, 연통, 배수구, 배관 상태에 따라 달라집니다. 현장 사진을 보내주시면 기본 설치 범위와 예상 추가 비용을 먼저 안내합니다."},
     {q:"사진만으로 견적을 받을 수 있나요?",a:"보일러 전체 공간, 기존 모델명, 배관과 연통, 3m 이내 배수구 위치를 촬영해 주세요. 각방제어를 사용하면 실내온도조절기와 각방제어기 사진도 필요합니다."},
