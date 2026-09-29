@@ -161,6 +161,7 @@ footer { background:#dbe5ec; box-shadow:0 0 0 100vmax #dbe5ec; }
 .price-guide b{font-size:13px}
 .price-guide span{color:#46515b;font-size:13px;line-height:1.55}
 .price-guide small{color:#7a817f;font-size:11px;line-height:1.55}
+.price-detail-link{display:inline-flex;align-items:center;margin-top:18px;color:var(--blue);font-size:14px;font-weight:700;line-height:1.5;text-decoration:underline;text-underline-offset:4px}
 @media(max-width:600px){.price-tables{grid-template-columns:1fr}.price-card>p{padding:12px 14px}.price-guide{grid-column:auto;padding:14px}.price-guide span{font-size:12px}}
 
 /* Mobile-first boiler price guide */
