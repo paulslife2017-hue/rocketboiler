@@ -1,4 +1,5 @@
 import HiddenAdminEntry from "./components/HiddenAdminEntry";
+import { getServiceArea, priorityRegionSlugs } from "./regions/data";
 
 const phoneDisplay = "010-5858-9975";
 const phoneHref = "tel:01058589975";
@@ -12,17 +13,11 @@ const faqs = [
   ["어떤 브랜드를 설치하나요?", "경동나비엔, 귀뚜라미, 린나이 보일러를 취급합니다. 집의 평수와 온수 사용량, 기존 설치 조건에 맞는 제품을 안내해 드립니다."],
 ];
 
-const areas = [
-  ["군포시", "/regions/gunpo"],
-  ["안양시", "/regions/anyang"],
-  ["과천시", "/regions/gwacheon"],
-  ["광명시", "/regions/gwangmyeong"],
-  ["부천시", "/regions/bucheon"],
-  ["고양시", "/regions/goyang"],
-  ["구리시", "/regions/guri"],
-  ["하남시", "/regions/hanam"],
-  ["성남시", "/regions/seongnam"],
-];
+const areas = priorityRegionSlugs.map((slug) => {
+  const area = getServiceArea(slug);
+  if (!area) throw new Error(`Unknown priority service area: ${slug}`);
+  return [area.name, `/regions/${slug}`] as const;
+});
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -125,12 +120,13 @@ export default function Home() {
       <section className="section area" id="area">
         <div className="section-heading compact">
           <span>출장 가능 지역</span>
-          <h2>서울 전 지역·경기 9개 시·인천 방문 가능합니다.</h2>
-          <p>지역과 접수 시간, 기사 배정 상황에 따라 당일 방문 여부가 달라질 수 있습니다.</p>
+          <h2>인천·부천·시흥·안산·안양과 서울 서남권 보일러 교체</h2>
+          <p>아래 주요 상담 지역에서 보일러 교체·신규 설치 조건을 확인하세요. 인천은 강화군·영종도를 제외하며, 방문 가능 시간은 접수 및 기사 일정에 따라 달라집니다.</p>
         </div>
         <div className="area-list">
+          <a href="/regions/incheon"><span className="pin">●</span><b>인천 보일러 교체·설치 비용</b><em>지역 안내 →</em></a>
           {areas.map(([name, href]) => <a href={href} key={name}><span className="pin">●</span><b>{name} 보일러 교체·설치 비용</b><em>지역 안내 →</em></a>)}
-          <a href="/regions"><span className="pin">●</span><b>서울·인천 전체 설치 지역</b><em>지역 안내 →</em></a>
+          <a href="/regions"><span className="pin">●</span><b>서울·경기·인천 전체 설치 지역</b><em>지역 안내 →</em></a>
           <p>목록에 없는 지역도 상담 시 주소를 알려주시면 확인해 드립니다.</p>
         </div>
       </section>
@@ -176,7 +172,7 @@ export default function Home() {
             <div className="footer-business-address"><dt>사업장 주소</dt><dd>서울특별시 금천구 시흥대로 97, 26동 2층 202호 (시흥동, 시흥유통상가)</dd></div>
           </dl>
         </section>
-        <p>로켓보일러 | 서울 전 지역·경기 9개 시·인천 보일러 교체·설치<br />인천 영종도·강화군 등 도서 지역 제외<br />© 2026 로켓보일러. All rights reserved.</p>
+        <p>로켓보일러 | 서울 전 지역·경기 11개 시·인천 보일러 교체·설치<br />인천 영종도·강화군 등 도서 지역 제외<br />© 2026 로켓보일러. All rights reserved.</p>
       </footer>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     </main>

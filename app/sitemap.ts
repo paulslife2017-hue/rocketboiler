@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: siteUrl },
     { url: `${siteUrl}/regions` },
+    { url: `${siteUrl}/regions/incheon` },
     { url: `${siteUrl}/brands` },
     { url: `${siteUrl}/guides` },
     ...serviceAreas.map(({ slug }) => ({ url: `${siteUrl}/regions/${slug}` })),
