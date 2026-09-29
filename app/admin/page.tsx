@@ -12,7 +12,7 @@ import ProfitManager from './ProfitManager';
 
 type Overview = { counts: { status: string; count: number; today: number }[]; channels: Record<string, { count: number; completed: number }>; schedule: Lead[]; updatedAt: string };
 type Tab = 'overview' | 'leads' | 'schedule' | 'ads' | 'orders' | 'inventory' | 'technicians' | 'profit';
-const tabs: { id: Tab; name: string; icon: string }[] = [{ id: 'overview', name: '전체 현황', icon: '◫' }, { id: 'leads', name: '상담 접수', icon: '☷' }, { id: 'schedule', name: '설치 일정', icon: '▦' }, { id: 'technicians', name: '기사 관리', icon: '♙' }, { id: 'orders', name: '스마트스토어 주문', icon: 'N' }, { id: 'inventory', name: '보일러 재고', icon: '▤' }, { id: 'profit', name: '매출·수익', icon: '₩' }, { id: 'ads', name: '광고 현황', icon: '↗' }];
+const tabs: { id: Tab; name: string; icon: string }[] = [{ id: 'overview', name: '전체 현황', icon: '◫' }, { id: 'ads', name: '광고 ON/OFF', icon: '↗' }, { id: 'leads', name: '상담 접수', icon: '☷' }, { id: 'schedule', name: '설치 일정', icon: '▦' }, { id: 'technicians', name: '기사 관리', icon: '♙' }, { id: 'orders', name: '스마트스토어 주문', icon: 'N' }, { id: 'inventory', name: '보일러 재고', icon: '▤' }, { id: 'profit', name: '매출·수익', icon: '₩' }];
 const number = (n: number) => n.toLocaleString('ko-KR');
 const dateLabel = (value?: string) => value ? new Date(value).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric' }) : '일정 협의';
 function Badge({ status }: { status: string }) { return <span className={s.badge} data-status={status}>{statusNames[status] || status}</span>; }
@@ -44,6 +44,13 @@ export default function AdminPage() {
   const dialog = useRef<HTMLDialogElement>(null);
   const requestId = useRef(0);
   const photosId = useRef(0);
+  function selectTab(next: Tab) {
+    setTab(next);
+    const url = new URL(window.location.href);
+    if (next === 'overview') url.searchParams.delete('tab');
+    else url.searchParams.set('tab', next);
+    window.history.replaceState(null, '', url);
+  }
 
   async function load(targetPage = 1, key = session, nextStatus = status) {
     const id = ++requestId.current;
@@ -65,6 +72,12 @@ export default function AdminPage() {
   function closeDetail() { if (saving) return; ++photosId.current; dialog.current?.close(); setSelected(null); setPhotoUrls([]); }
   useEffect(() => { if (selected && !dialog.current?.open) dialog.current?.showModal(); }, [selected]);
   useEffect(() => () => photoUrls.forEach((url) => URL.revokeObjectURL(url)), [photoUrls]);
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('tab');
+    if (!tabs.some((item) => item.id === requested)) return;
+    const timer = window.setTimeout(() => setTab(requested as Tab), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
   useEffect(() => {
     let entryCode = '';
     try {
@@ -112,10 +125,10 @@ export default function AdminPage() {
   const today = overview?.counts.filter((row) => row.status !== 'sample').reduce((sum, row) => sum + row.today, 0) || 0;
   const schedule = (overview?.schedule || []).filter((lead) => !scheduleFilter || lead.preferred_date?.slice(0, 10) === scheduleFilter);
 
-  if (!session) return <main className={s.login}><form className={s.loginCard} onSubmit={(event) => { event.preventDefault(); void load(1, password); }}><div className={s.logo}>R<span>↗</span></div><span className={s.eyebrow}>ROCKET BOILER</span><h1>로켓보일러 운영 관리</h1><p>상담 접수부터 설치 일정까지 한곳에서.</p><label htmlFor="admin-password">관리자 비밀번호</label><input id="admin-password" type="password" required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="비밀번호를 입력하세요" /><button className={s.primary} disabled={busy}>{busy ? '확인 중…' : '관리자로 입장 →'}</button>{message && <p role="alert" className={s.error}>{message}</p>}<Link href="/">← 로켓보일러 홈페이지</Link></form></main>;
+  if (!session) return <main className={s.login}><form className={s.loginCard} onSubmit={(event) => { event.preventDefault(); void load(1, password); }}><div className={s.logo}>R<span>↗</span></div><span className={s.eyebrow}>ROCKET BOILER</span><h1>로켓보일러 운영 관리</h1><p>광고 ON/OFF, 상담 접수, 설치 일정을 한곳에서 확인하세요.</p><label htmlFor="admin-password">관리자 비밀번호</label><input id="admin-password" type="password" required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="비밀번호를 입력하세요" /><button className={s.primary} disabled={busy}>{busy ? '확인 중…' : '관리자로 입장 →'}</button>{message && <p role="alert" className={s.error}>{message}</p>}<Link href="/">← 로켓보일러 홈페이지</Link></form></main>;
 
   return <main className={s.shell}>
-    <aside className={s.sidebar}><a className={s.brand} href="/admin"><div className={s.logo}>R<span>↗</span></div><div><b>로켓보일러</b><small>운영 관리</small></div></a><div className={s.topActions}><span>관리자</span><button className={s.ghost} onClick={logout}>로그아웃</button></div><div className={s.sideLabel}>WORKSPACE</div><nav className={s.navigation} aria-label="관리 메뉴">{tabs.map((item) => <button key={item.id} aria-current={tab === item.id ? 'page' : undefined} onClick={() => setTab(item.id)}><span>{item.icon}</span>{item.name}{item.id === 'leads' && count('new') > 0 && <b>{count('new')}</b>}</button>)}</nav><label className={s.mobileNav}>관리 메뉴<select aria-label="관리 메뉴 선택" value={tab} onChange={event => setTab(event.target.value as Tab)}>{tabs.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><div className={s.sidebarBottom}><a href="/" target="_blank" rel="noreferrer">홈페이지 보기 ↗</a><span>서울·경기·인천</span><small>보일러 설치·교체 상담</small></div></aside>
+    <aside className={s.sidebar}><a className={s.brand} href="/admin"><div className={s.logo}>R<span>↗</span></div><div><b>로켓보일러</b><small>운영 관리</small></div></a><div className={s.topActions}><span>관리자</span><button className={s.ghost} onClick={logout}>로그아웃</button></div><div className={s.sideLabel}>WORKSPACE</div><nav className={s.navigation} aria-label="관리 메뉴">{tabs.map((item) => <button key={item.id} aria-current={tab === item.id ? 'page' : undefined} onClick={() => selectTab(item.id)}><span>{item.icon}</span>{item.name}{item.id === 'leads' && count('new') > 0 && <b>{count('new')}</b>}</button>)}</nav><label className={s.mobileNav}>관리 메뉴<select aria-label="관리 메뉴 선택" value={tab} onChange={event => selectTab(event.target.value as Tab)}>{tabs.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><div className={s.sidebarBottom}><a href="/" target="_blank" rel="noreferrer">홈페이지 보기 ↗</a><span>지정 지역 광고만 운영</span><small>보일러 설치·교체 상담</small></div></aside>
     <div className={s.workspace}><header className={s.topbar}><span>운영 관리 <i>/</i> {tabs.find((item) => item.id === tab)?.name}</span><div><span className={s.online}>관리자</span><button className={s.ghost} onClick={logout}>로그아웃</button></div></header>
     <div className={s.content}><div className={s.heading}><div><span className={s.eyebrow}>ROCKET BOILER · OPERATIONS</span><h1>{tabs.find((item) => item.id === tab)?.name}</h1><p>{tab === 'profit' ? '판매 채널별 자동 매출·수익 집계' : tab === 'technicians' ? '설치 기사 등록·담당 지역·상담 배정 현황' : tab === 'ads' ? '네이버·구글 광고 유입과 상담 성과' : tab === 'schedule' ? '설치 예정으로 등록된 상담 일정' : tab === 'orders' ? '스마트스토어 주문과 출고 현황' : tab === 'inventory' ? '보일러 모델별 보유·예약·판매 가능 수량' : '접수된 상담과 다음 설치 일정을 확인하세요.'}</p></div><div className={s.refresh}><small>{overview ? new Date(overview.updatedAt).toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit' }) + ' 기준' : ''}</small><button className={s.ghost} disabled={busy} onClick={() => load(page)}>{busy ? '조회 중…' : '↻ 새로고침'}</button></div></div>
     {message && <div className={s.error} role="alert">{message}</div>}{busy && <p className={s.loading} role="status">최신 접수 현황을 불러오고 있습니다…</p>}
@@ -127,7 +140,7 @@ export default function AdminPage() {
       {!leads.length && <div className={s.empty}><span>☷</span><h3>표시할 상담이 없습니다</h3><p>검색 조건을 바꾸거나 새로고침해 주세요.</p></div>}<div className={s.pagination}><span>검색 결과 {number(total)}건</span><div><button disabled={busy || page <= 1} onClick={() => load(page - 1)}>이전</button><span>{page} / {pages}</span><button disabled={busy || page >= pages} onClick={() => load(page + 1)}>다음</button></div></div></section>
     </>}
     {tab === 'schedule' && <section className={s.panel}><div className={s.sectionTitle}><h2>설치 예정 <span>{count('scheduled')}건</span></h2><label className={s.dateFilter}>방문 날짜 <input type="date" value={scheduleFilter} onChange={(event) => setScheduleFilter(event.target.value)} /><button className={s.ghost} onClick={() => setScheduleFilter('')}>전체</button></label></div><p className={s.hint}>고객 희망 일정입니다. 상담 상세에서 통화 후 확정한 날짜와 시간으로 변경할 수 있습니다. 최대 100건을 표시합니다.</p><div className={s.scheduleGrid}>{schedule.map((lead) => <button className={s.scheduleCard} onClick={() => openLead(lead)} key={lead.id}><div><time>{dateLabel(lead.preferred_date)}</time><Badge status={lead.status} /></div><h3>{lead.customer_name} <small>{lead.region}</small></h3><p>{lead.installation_type}</p><span>{lead.preferred_time || '시간 협의'}</span><footer>{lead.current_brand || '브랜드 상담'} · 현장 사진 {lead.photo_paths?.length || 0}장 <b>상담 열기 →</b></footer></button>)}</div>{!schedule.length && <div className={s.empty}><span>▦</span><h3>설치 예정 상담이 없습니다</h3><p>상담 상세에서 처리 상태를 ‘설치 예정’으로 변경해 주세요.</p></div>}</section>}
-    {tab === 'ads' && <NaverAds key={overview?.updatedAt} session={session} />}
+    {tab === 'ads' && <><div className={s.adsIntro}><div><span className={s.eyebrow}>AD CONTROL CENTER</span><h2>광고 운영</h2><p>네이버와 구글 광고를 각각 확인하세요. 캠페인 ON만으로 실제 노출이 보장되지는 않으며 광고그룹·심사·지역 설정도 함께 적용됩니다.</p></div><div><span>플랫폼별 하루예산 목표</span><strong>각 100,000원</strong><small>실제 설정값은 각 광고계정에서 확인</small></div></div><NaverAds key={overview?.updatedAt} session={session} /></>}
     {tab === 'profit' && <ProfitManager key={overview?.updatedAt} session={session} />}
     {tab === 'technicians' && <Technicians key={overview?.updatedAt} session={session} />}
     {(tab === 'orders' || tab === 'inventory') && <Operations key={overview?.updatedAt} session={session} view={tab} />}

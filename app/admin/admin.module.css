@@ -259,3 +259,40 @@
   .googleConnect button,.adTools button { width:100%; }
   .adTools { padding:0 18px 20px; }
 }
+
+/* Clear, touch-friendly advertising controls. */
+.adsIntro{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:22px;padding:25px 28px;border:1px solid #efb14b5c;border-radius:18px;background:linear-gradient(110deg,#192a39,#14202f 68%,#28301f);box-shadow:0 16px 40px #0002}
+.adsIntro h2{font-size:26px;letter-spacing:-.04em}
+.adsIntro p{max-width:640px;margin-top:8px;color:var(--muted);font-size:14px;line-height:1.7}
+.adsIntro>div:last-child{display:grid;gap:4px;min-width:195px;padding:15px 18px;border-radius:12px;background:#ffffff0a}
+.adsIntro>div:last-child span,.adsIntro>div:last-child small{color:var(--muted);font-size:12px}
+.adsIntro strong{color:var(--gold);font-size:21px}
+.navigation button:nth-child(2){color:#f1c273}
+.navigation button:nth-child(2)[aria-current]{background:#efb14b27}
+.groupControls{display:grid;gap:0;padding:0 22px 12px}
+.groupControl{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 4px;border-top:1px solid var(--border)}
+.groupControl strong,.groupControl small{display:block}
+.groupControl small{margin-top:5px;color:var(--muted);font-size:13px}
+.groupControlAction{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.googleCampaign{border-top:1px solid var(--border)}
+.googleCampaign .adMaster{border:0}
+.googleCampaign h3{font-size:20px;overflow-wrap:anywhere}
+.googleActions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.adSafety{max-width:720px;margin-top:15px!important;padding:10px 12px;border:1px solid #efb14b55;border-radius:8px;color:#eac387!important;background:#efb14b0c}
+.adTools .externalLink{display:inline-flex;min-height:42px;align-items:center}
+.adSwitch:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:800px){
+  .adsIntro{align-items:stretch;flex-direction:column;padding:22px 20px}
+  .adsIntro>div:last-child{min-width:0}
+  .adMaster{flex-wrap:wrap}
+  .adSwitchArea{display:flex;align-items:center;justify-content:space-between;width:100%;padding-top:14px;border-top:1px solid var(--border)}
+  .adSwitchArea>strong{margin-left:auto}
+  .groupControls{padding:0 16px 8px}
+  .googleCampaign h3{font-size:18px}
+}
+@media(max-width:480px){
+  .groupControl{align-items:flex-start;flex-direction:column}
+  .groupControlAction{justify-content:space-between;width:100%}
+  .googleActions>*{width:100%;justify-content:center}
+  .navigation button{min-height:48px}
+}
