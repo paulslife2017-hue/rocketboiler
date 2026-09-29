@@ -4,7 +4,10 @@
 :root { --navy:#102b4e; --blue:#1261a7; --red:#f05a28; --text:#17202a; --muted:#65707c; --line:#dfe5eb; --soft:#f3f7fa; --warm:#f8f5ef; }
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; }
-body { margin:0; color:var(--text); background:#fff; font-family:"Pretendard Variable","Pretendard","Apple SD Gothic Neo",Arial,sans-serif; word-break:keep-all; letter-spacing:-.025em; font-weight:400; }
+body { margin:0; color:var(--text); background:#fff; font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif; word-break:keep-all; overflow-wrap:break-word; letter-spacing:-.018em; font-weight:400; line-height:1.65; -webkit-font-smoothing:antialiased; }
+button,input,select,textarea { font-family:inherit; }
+h1,h2,h3 { text-wrap:balance; }
+p { text-wrap:pretty; }
 a { color:inherit; text-decoration:none; }
 .top-notice { background:var(--navy); color:#e9eef5; font-size:12px; }
 .top-notice>div { max-width:1180px; margin:auto; padding:9px 20px; display:flex; justify-content:space-between; }
