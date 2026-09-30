@@ -22,7 +22,7 @@ export default async function RegionPage({params}:{params:Promise<{slug:string}>
     {q:`${area.name}에서 10년 넘은 보일러의 온수가 미지근하면 바로 교체해야 하나요?`,a:"온수 설정 온도와 에러 표시, 다른 수도꼭지에서도 같은 증상이 있는지 먼저 확인하세요. 사용 연수만으로 교체를 결정하기보다 제조사 서비스 점검으로 원인과 수리 가능 여부를 확인한 뒤 교체 견적과 비교하는 편이 좋습니다. 기존 모델명과 설치 공간 사진을 보내주시면 교체가 필요한 경우 설치 조건을 안내합니다."},
     {q:"아파트가 지역난방이면 가스보일러 교체 대상인가요?",a:"세대에 개별 가스보일러가 없는 지역난방 아파트라면 가스보일러 교체 대상이 아닐 수 있습니다. 난방이 약하다면 관리사무소에 난방 방식과 분배기·밸브 점검 대상을 먼저 확인하세요. 개별 가스보일러가 설치된 세대라면 모델명과 설치 환경을 확인해 교체 상담을 진행할 수 있습니다."}
   ];
-  const schema={"@context":"https://schema.org","@type":"Service",name:`${region} 보일러 교체·설치`,serviceType:"가정용 가스보일러 교체 및 신규 설치",provider:{"@type":"HVACBusiness",name:"로켓보일러",url:siteUrl,brand:["경동나비엔","귀뚜라미","린나이"]},areaServed:{"@type":"AdministrativeArea",name:region},url:`${siteUrl}/regions/${area.slug}`};
+  const schema={"@context":"https://schema.org","@type":"Service",name:`${region} 보일러 교체·설치`,serviceType:"가정용 가스보일러 교체 및 신규 설치",provider:{"@id":`${siteUrl}/#organization`},areaServed:{"@type":"AdministrativeArea",name:region},url:`${siteUrl}/regions/${area.slug}`};
   const breadcrumbSchema={"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:[{"@type":"ListItem",position:1,name:"로켓보일러",item:siteUrl},{"@type":"ListItem",position:2,name:"설치 지역",item:`${siteUrl}/regions`},{"@type":"ListItem",position:3,name:`${region} 보일러 교체·설치`,item:`${siteUrl}/regions/${area.slug}`}]};
   const faqSchema={"@context":"https://schema.org","@type":"FAQPage",mainEntity:faq.map(x=>({"@type":"Question",name:x.q,acceptedAnswer:{"@type":"Answer",text:x.a}}))};
   return <main className={styles.shell}>

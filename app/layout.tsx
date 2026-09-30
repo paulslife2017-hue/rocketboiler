@@ -7,22 +7,21 @@ const siteUrl = "https://rocketboiler.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "보일러 교체비용·설치비용 가격표 | 로켓보일러", template: "%s | 로켓보일러" },
-  description: "보일러 교체비용은 일반형 원룸 기준 60만원대부터. 귀뚜라미·린나이·경동나비엔 예상 가격과 추가 설치비 기준을 확인하고 서울·경기·인천 방문 상담을 받으세요.",
-  keywords: ["보일러 교체 비용", "가스보일러 교체", "보일러 설치 비용", "경동나비엔 보일러 교체", "귀뚜라미 보일러 교체", "린나이 보일러 교체", "콘덴싱 보일러 교체", "인천 보일러 교체", "안양 보일러 교체", "부천 보일러 교체", "시흥 보일러 교체", "안산 보일러 교체"],
+  title: { default: "로켓보일러 | 서울·경기·인천 보일러 교체·설치 상담", template: "%s | 로켓보일러" },
+  description: "서울·경기·인천 가스보일러 교체·설치 상담. 기존 모델, 연통·배관·배수구와 각방제어 조건을 확인하고 작업 범위와 비용을 안내합니다. 상담 010-5858-9975.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "ko_KR",
     siteName: "로켓보일러",
-    title: "보일러 교체비용·설치비용 가격표 | 로켓보일러",
-    description: "일반형 원룸 기준 60만원대부터. 브랜드별 예상 가격과 기본 설치·추가 작업 기준을 확인하고 전화로 상담하세요.",
+    title: "로켓보일러 | 서울·경기·인천 보일러 교체·설치 상담",
+    description: "기존 모델과 설치 조건을 확인해 가스보일러 교체·설치 범위와 비용을 안내합니다. 상담 010-5858-9975.",
     images: [{ url: "/og.png", width: 1536, height: 1024, alt: "로켓보일러 서울·경기 보일러 교체·설치" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "보일러 교체비용·설치비용 가격표 | 로켓보일러",
-    description: "일반형 원룸 기준 60만원대부터. 브랜드별 예상 가격과 기본 설치·추가 작업 기준을 확인하고 전화로 상담하세요.",
+    title: "로켓보일러 | 서울·경기·인천 보일러 교체·설치 상담",
+    description: "기존 모델과 설치 조건을 확인해 가스보일러 교체·설치 범위와 비용을 안내합니다. 상담 010-5858-9975.",
     images: ["/og.png"],
   },
   robots: { index: true, follow: true },
@@ -34,7 +33,8 @@ export const metadata: Metadata = {
 
 const localBusiness = {
   "@context": "https://schema.org",
-  "@type": "HVACBusiness",
+  "@type": ["Organization", "HVACBusiness"],
+  "@id": `${siteUrl}/#organization`,
   name: "로켓보일러",
   legalName: "보일러 마스터",
   url: siteUrl,
