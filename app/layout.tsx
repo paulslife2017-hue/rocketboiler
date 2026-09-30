@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   verification: {
     google: "Cp7SFz3tzpsMia6iRSQ5wZm59vKxIjiwg8yp0fLvObc",
-    other: { "naver-site-verification": "7744996afa5773d3ec1ce39c4458f482b3229889" },
+    other: { "naver-site-verification": ["7744996afa5773d3ec1ce39c4458f482b3229889", "47e912b1460b702cf880b5caeb55db316a449064"] },
   },
 };
 
@@ -40,6 +40,7 @@ const localBusiness = {
   url: siteUrl,
   description: "서울·경기·인천 가정용 가스보일러 교체·설치 비용 상담",
   telephone: "+82-10-5858-9975",
+  sameAs: ["https://naver.me/5kPfx737", "https://blog.naver.com/rocketboiler_"],
   address: { "@type": "PostalAddress", streetAddress: "시흥대로 97, 26동 2층 202호 (시흥동, 시흥유통상가)", addressLocality: "금천구", addressRegion: "서울특별시", addressCountry: "KR" },
   areaServed: ["서울특별시", "군포시", "안양시", "과천시", "광명시", "부천시", "시흥시", "안산시", "고양시", "구리시", "하남시", "성남시", "인천광역시(강화군·영종도 제외)"],
   image: `${siteUrl}/og.png`,

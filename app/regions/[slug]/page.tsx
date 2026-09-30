@@ -9,9 +9,8 @@ const siteUrl = "https://rocketboiler.vercel.app";
 export function generateStaticParams(){ return serviceAreas.map(({slug})=>({slug})); }
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{
   const area=getServiceArea((await params).slug); if(!area)return{}; const areaKeyword=area.slug==="dongjak"?area.name:area.name.replace(/(시|구)$/,""); const region=`${area.province} ${area.name}`;
-  const title=`${area.province==="경기"?areaKeyword:region} 보일러 교체비용·설치비용`,description=`${areaKeyword} 가스보일러 교체·설치 상담. 귀뚜라미 일반형 원룸·기본 설치 기준 60만원대부터. 경동나비엔·린나이 비교와 연통·배관·배수구 추가 작업 기준을 확인하세요.`;
-  const localKeywords=area.neighborhoods.flatMap(n=>[`${n} 보일러 교체`,`${n} 보일러 설치`,`${n} 보일러 가격`]);
-  return{title,description,keywords:[`${areaKeyword} 보일러 교체`,`${areaKeyword} 보일러 교체비용`,`${areaKeyword} 보일러 설치`,`${areaKeyword} 가스보일러 교체`,`${region} 보일러 교체`,`${area.name} 경동나비엔 보일러`,`${area.name} 귀뚜라미 보일러`,`${area.name} 린나이 보일러`,...localKeywords],alternates:{canonical:`/regions/${area.slug}`},openGraph:{title:`${title} | 로켓보일러`,description,url:`/regions/${area.slug}`,images:["/og.png"]}};
+  const title=`${area.province==="경기"?areaKeyword:region} 보일러 교체·설치 상담`,description=`${areaKeyword} 가스보일러 교체·설치가 필요하신가요? 온수가 미지근하거나 고장이 반복될 때 확인할 점, 설치 전 사진과 연통·배관·배수구 조건을 안내합니다.`;
+  return{title,description,keywords:[`${areaKeyword} 보일러 교체`,`${areaKeyword} 보일러 설치`,`${areaKeyword} 보일러 교체 비용`,`${areaKeyword} 가스보일러`,`${area.name} 보일러`],alternates:{canonical:`/regions/${area.slug}`},openGraph:{title:`${title} | 로켓보일러`,description,url:`/regions/${area.slug}`,images:["/og.png"]}};
 }
 export default async function RegionPage({params}:{params:Promise<{slug:string}>}){
   const area=getServiceArea((await params).slug); if(!area)notFound(); const areaKeyword=area.slug==="dongjak"?area.name:area.name.replace(/(시|구)$/,""); const region=`${area.province} ${area.name}`;
@@ -19,7 +18,9 @@ export default async function RegionPage({params}:{params:Promise<{slug:string}>
     {q:`${area.name} 보일러 교체 비용은 어떻게 확인하나요?`,a:"보일러 모델과 용량, 연통, 배수구, 배관 상태에 따라 달라집니다. 현장 사진을 보내주시면 기본 설치 범위와 예상 추가 비용을 먼저 안내합니다."},
     {q:"사진만으로 견적을 받을 수 있나요?",a:"보일러 전체 공간, 기존 모델명, 배관과 연통, 3m 이내 배수구 위치를 촬영해 주세요. 각방제어를 사용하면 실내온도조절기와 각방제어기 사진도 필요합니다."},
     {q:"현장에서 추가 비용이 생길 수 있나요?",a:"기본 설치 범위를 벗어나 연통 연장, 밸브 교체, 배관 수정, 각방 통신변환기 등이 필요한 경우 추가될 수 있습니다. 사진과 현장 확인 후 작업 전에 비용을 먼저 안내합니다."},
-    {q:"설치 시간은 얼마나 걸리나요?",a:"일반 교체는 평균 1시간 30분에서 2시간 정도이며, 각방제어 추가 시 최대 3시간, 통신선 정리가 필요하면 4시간가량 걸릴 수 있습니다."}
+    {q:"설치 시간은 얼마나 걸리나요?",a:"일반 교체는 평균 1시간 30분에서 2시간 정도이며, 각방제어 추가 시 최대 3시간, 통신선 정리가 필요하면 4시간가량 걸릴 수 있습니다."},
+    {q:`${area.name}에서 10년 넘은 보일러의 온수가 미지근하면 바로 교체해야 하나요?`,a:"온수 설정 온도와 에러 표시, 다른 수도꼭지에서도 같은 증상이 있는지 먼저 확인하세요. 사용 연수만으로 교체를 결정하기보다 제조사 서비스 점검으로 원인과 수리 가능 여부를 확인한 뒤 교체 견적과 비교하는 편이 좋습니다. 기존 모델명과 설치 공간 사진을 보내주시면 교체가 필요한 경우 설치 조건을 안내합니다."},
+    {q:"아파트가 지역난방이면 가스보일러 교체 대상인가요?",a:"세대에 개별 가스보일러가 없는 지역난방 아파트라면 가스보일러 교체 대상이 아닐 수 있습니다. 난방이 약하다면 관리사무소에 난방 방식과 분배기·밸브 점검 대상을 먼저 확인하세요. 개별 가스보일러가 설치된 세대라면 모델명과 설치 환경을 확인해 교체 상담을 진행할 수 있습니다."}
   ];
   const schema={"@context":"https://schema.org","@type":"Service",name:`${region} 보일러 교체·설치`,serviceType:"가정용 가스보일러 교체 및 신규 설치",provider:{"@type":"HVACBusiness",name:"로켓보일러",url:siteUrl,brand:["경동나비엔","귀뚜라미","린나이"]},areaServed:{"@type":"AdministrativeArea",name:region},url:`${siteUrl}/regions/${area.slug}`};
   const breadcrumbSchema={"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:[{"@type":"ListItem",position:1,name:"로켓보일러",item:siteUrl},{"@type":"ListItem",position:2,name:"설치 지역",item:`${siteUrl}/regions`},{"@type":"ListItem",position:3,name:`${region} 보일러 교체·설치`,item:`${siteUrl}/regions/${area.slug}`}]};
