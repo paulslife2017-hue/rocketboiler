@@ -169,6 +169,8 @@
   .inventoryFilters button { min-height: 44px; }
   .inventoryPanel .registerStock { min-height: 44px; }
 }
+.clickProtection .sectionTitle{align-items:flex-start}.clickProtection .sectionTitle .hint{padding:5px 0 0;margin:0}.clickProtection .sectionTitle>span{flex-shrink:0;border:1px solid #c994474d;background:#c9944714;color:#e7bd78;border-radius:999px;padding:5px 10px;font-size:12px}.clickProtectionGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:0 24px 20px}.clickProtectionGrid>div{min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:17px}.clickProtectionGrid b{display:block;font-size:14px;margin-bottom:8px}.clickProtectionGrid p{font-size:13px;color:var(--muted);line-height:1.65}.clickProtectionLinks{display:flex;flex-wrap:wrap;gap:8px;padding:0 24px 19px}.clickProtectionLinks a{display:inline-flex;align-items:center;min-height:40px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--ink)}.clickProtectionLinks a:hover{border-color:var(--gold);color:var(--gold)}.clickProtectionNote{border-top:1px solid var(--border);padding:16px 24px!important;font-size:12px!important;color:var(--muted);line-height:1.65}
+@media(max-width:800px){.clickProtectionGrid{grid-template-columns:1fr;padding:0 16px 16px}.clickProtectionLinks{padding:0 16px 16px}.clickProtectionLinks a{flex:1 1 100%;justify-content:center}.clickProtectionNote{padding:14px 16px!important}.clickProtection .sectionTitle>span{white-space:nowrap}}
 @media (max-width: 800px) {
   .sidebar { padding-top: 20px; gap: 18px; }
   .navigation { scrollbar-width: thin; }
