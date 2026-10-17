@@ -3,18 +3,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getServiceArea, serviceAreas } from "../data";
+import { gwangmyeongContent } from "../gwangmyeong-content";
 import SeoKeywordLinks from "../../components/SeoKeywordLinks";
 import styles from "../regions.module.css";
 const siteUrl = "https://rocketboiler.vercel.app";
 export function generateStaticParams(){ return serviceAreas.map(({slug})=>({slug})); }
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{
   const area=getServiceArea((await params).slug); if(!area)return{}; const areaKeyword=area.slug==="dongjak"?area.name:area.name.replace(/(시|구)$/,""); const region=`${area.province} ${area.name}`;
-  const title=`${area.province==="경기"?areaKeyword:region} 보일러 교체·설치 상담`,description=`${areaKeyword} 가스보일러 교체·설치가 필요하신가요? 온수가 미지근하거나 고장이 반복될 때 확인할 점, 설치 전 사진과 연통·배관·배수구 조건을 안내합니다.`;
+  const title=`${area.province==="경기"?areaKeyword:region} 보일러 교체·설치 상담`,description=area.slug==="gwangmyeong"?gwangmyeongContent.description:`${areaKeyword} 가스보일러 교체·설치가 필요하신가요? 온수가 미지근하거나 고장이 반복될 때 확인할 점, 설치 전 사진과 연통·배관·배수구 조건을 안내합니다.`;
   return{title,description,keywords:[`${areaKeyword} 보일러 교체`,`${areaKeyword} 보일러 설치`,`${areaKeyword} 보일러 교체 비용`,`${areaKeyword} 가스보일러`,`${area.name} 보일러`],alternates:{canonical:`/regions/${area.slug}`},openGraph:{title:`${title} | 로켓보일러`,description,url:`/regions/${area.slug}`,images:["/og.png"]}};
 }
 export default async function RegionPage({params}:{params:Promise<{slug:string}>}){
   const area=getServiceArea((await params).slug); if(!area)notFound(); const areaKeyword=area.slug==="dongjak"?area.name:area.name.replace(/(시|구)$/,""); const region=`${area.province} ${area.name}`;
-  const faq=[
+  const content=area.slug==="gwangmyeong"?gwangmyeongContent:null;
+  const faq=content?.faq??[
     {q:`${area.name} 보일러 교체 비용은 어떻게 확인하나요?`,a:"보일러 모델과 용량, 연통, 배수구, 배관 상태에 따라 달라집니다. 현장 사진을 보내주시면 기본 설치 범위와 예상 추가 비용을 먼저 안내합니다."},
     {q:"사진만으로 견적을 받을 수 있나요?",a:"보일러 전체 공간, 기존 모델명, 배관과 연통, 3m 이내 배수구 위치를 촬영해 주세요. 각방제어를 사용하면 실내온도조절기와 각방제어기 사진도 필요합니다."},
     {q:"현장에서 추가 비용이 생길 수 있나요?",a:"기본 설치 범위를 벗어나 연통 연장, 밸브 교체, 배관 수정, 각방 통신변환기 등이 필요한 경우 추가될 수 있습니다. 사진과 현장 확인 후 작업 전에 비용을 먼저 안내합니다."},
@@ -27,9 +29,13 @@ export default async function RegionPage({params}:{params:Promise<{slug:string}>
   const faqSchema={"@context":"https://schema.org","@type":"FAQPage",mainEntity:faq.map(x=>({"@type":"Question",name:x.q,acceptedAnswer:{"@type":"Answer",text:x.a}}))};
   return <main className={styles.shell}>
     <nav className={styles.nav}><Link href="/" className={styles.brand}>ROCKET BOILER</Link><Link href="/regions" className={styles.navLink}>전체 설치 지역</Link></nav>
-    <section className={styles.hero}><p className={styles.eyebrow}>{region} 가스보일러 교체·설치</p><h1>{areaKeyword} 보일러 교체비용,<br/><em>기본 설치부터 확인하세요</em></h1><p className={styles.lead}>귀뚜라미 일반형 원룸 기준 60만원대부터. 경동나비엔·린나이를 포함한 실제 교체·설치 비용은 용량과 배관·연통·배수구 조건에 따라 달라집니다.</p><div className={styles.actions}><a href="tel:01058589975" className={styles.primary}>전화로 바로 상담</a><a href="#cost" className={styles.secondary}>비용 기준 보기</a></div></section>
+    <section className={styles.hero}><p className={styles.eyebrow}>{region} 가스보일러 교체·설치</p><h1>{content?.heading??`${areaKeyword} 보일러 교체비용,`}<br/><em>{content?.emphasis??"기본 설치부터 확인하세요"}</em></h1><p className={styles.lead}>{content?.lead??"귀뚜라미 일반형 원룸 기준 60만원대부터. 경동나비엔·린나이를 포함한 실제 교체·설치 비용은 용량과 배관·연통·배수구 조건에 따라 달라집니다."}</p><div className={styles.actions}><a href="tel:01058589975" className={styles.primary}>전화로 바로 상담</a><a href="#cost" className={styles.secondary}>비용 기준 보기</a></div></section>
     <section className={styles.localStrip}><strong>방문 상담 지역</strong><span>{area.neighborhoods.join(" · ")} 및 {area.name} 전 지역</span></section>
-    <section className={styles.section} id="cost"><p className={styles.kicker}>견적에서 확인할 항목</p><h2>{areaKeyword} 보일러 교체비용,<br/>어떻게 달라지나요?</h2><p className={styles.costIntro}>기본 설치 예상가는 일반형 원룸 기준 60만원대부터, 콘덴싱 원룸 기준 75~80만원입니다. 같은 지역에서도 제품 용량과 현장 조건에 따라 최종 금액이 달라지므로 추가 작업 여부를 먼저 확인합니다.</p><div className={styles.grid}><article><b>01</b><h3>보일러 교체 비용</h3><p>기존 모델, 난방 평수, 용량과 배관 상태를 함께 확인해 알맞은 제품과 설치 범위를 안내합니다.</p></article><article><b>02</b><h3>연통·배수구 조건</h3><p>신규 설치나 위치 변경은 연통 연장과 타공이 필요할 수 있으며, 콘덴싱 보일러는 배수구 위치를 확인합니다.</p></article><article><b>03</b><h3>각방제어·통신선</h3><p>각방제어기와 실내조절기 사진을 확인해 작업 시간과 추가 자재 가능성을 미리 설명합니다.</p></article></div><Link className={styles.costLink} href="/guides/boiler-replacement-cost">평수별 예상 가격표와 추가 설치비 기준 보기 →</Link></section>
+    <section className={styles.section} id="cost"><p className={styles.kicker}>견적에서 확인할 항목</p><h2>{areaKeyword} 보일러 교체비용,<br/>어떻게 달라지나요?</h2><p className={styles.costIntro}>{content?.costIntro??"기본 설치 예상가는 일반형 원룸 기준 60만원대부터, 콘덴싱 원룸 기준 75~80만원입니다. 같은 지역에서도 제품 용량과 현장 조건에 따라 최종 금액이 달라지므로 추가 작업 여부를 먼저 확인합니다."}</p><div className={styles.grid}>{(content?.costItems??[
+      {title:"보일러 교체 비용",text:"기존 모델, 난방 평수, 용량과 배관 상태를 함께 확인해 알맞은 제품과 설치 범위를 안내합니다."},
+      {title:"연통·배수구 조건",text:"신규 설치나 위치 변경은 연통 연장과 타공이 필요할 수 있으며, 콘덴싱 보일러는 배수구 위치를 확인합니다."},
+      {title:"각방제어·통신선",text:"각방제어기와 실내조절기 사진을 확인해 작업 시간과 추가 자재 가능성을 미리 설명합니다."},
+    ]).map((item,index)=><article key={item.title}><b>{String(index+1).padStart(2,"0")}</b><h3>{item.title}</h3><p>{item.text}</p></article>)}</div><Link className={styles.costLink} href="/guides/boiler-replacement-cost">평수별 예상 가격표와 추가 설치비 기준 보기 →</Link></section>
     <section className={`${styles.section} ${styles.fieldStory}`}>
       <div className={styles.fieldIntro}>
         <p className={styles.kicker}>실제 작업 현장</p>
